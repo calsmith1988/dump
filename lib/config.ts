@@ -9,7 +9,7 @@ export const SITE = {
   description:
     'Daily Fibre by dump. Support for smoother mornings, less bloat, and more regular days. Plant-based, no sugar, made in the UK.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-  contactEmail: 'calum@dumpdaily.co.uk',
+  contactEmail: 'hey@trydump.co',
 };
 
 export const PRODUCT = {
