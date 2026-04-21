@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background-color: #F7F2EC;
+  color: #2A1C13;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-feature-settings: 'ss01', 'cv11';
+}
+
+::selection {
+  background-color: #5A3A29;
+  color: #F7F2EC;
+}
+
+*:focus-visible {
+  outline: 2px solid #5A3A29;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@layer components {
+  .wordmark {
+    font-family: var(--font-playfair), Georgia, serif;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded bg-cocoa px-6 py-4 text-base font-medium text-cream transition-all;
+    @apply hover:bg-ink active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded border border-tape bg-transparent px-6 py-4 text-base font-medium text-ink transition-all;
+    @apply hover:border-cocoa hover:text-cocoa;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-2 text-sm text-muted;
+  }
+
+  .section {
+    @apply mx-auto w-full max-w-content px-5 sm:px-8;
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-[0.18em] text-muted;
+  }
+
+  .hr-hair {
+    @apply h-px w-full bg-tape;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

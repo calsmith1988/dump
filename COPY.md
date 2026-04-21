@@ -1,0 +1,288 @@
+# dump — Daily Fibre landing page copy
+
+Every line of customer-facing text on the site, organised by section. Edit this file if you want to review or rewrite before updating the components.
+
+Values wrapped in `{curly braces}` are driven by [`lib/config.ts`](lib/config.ts). Change them once there and they flow through every section.
+
+---
+
+## Global config (lib/config.ts)
+
+- **Brand name:** dump
+- **Tagline:** Everyone does it. We make it easier.
+- **SEO description:** Daily Fibre by dump. Support for smoother mornings, less bloat, and more regular days. Plant-based, no sugar, made in the UK.
+- **Contact email:** hello@dump.example
+- **Product name:** Daily Fibre
+- **Price:** £29
+- **Net weight:** 250g per pouch
+- **Serving size:** 5g (one scoop)
+- **Servings per pouch:** 50
+- **Shipping line:** Free UK shipping
+- **Ship date (long):** Monday 18 May 2026
+- **Ship date (short):** 18 May
+- **Batch size:** 500
+
+---
+
+## 1. Announcement bar
+
+> Pre-orders open. First batch of {500}. Ships {Monday 18 May 2026}.
+
+---
+
+## 2. Nav
+
+- Wordmark: **dump**
+- Button: **Pre-order**
+
+---
+
+## 3. Hero
+
+- Eyebrow: **Daily Fibre · Pre-order**
+- Headline:
+  > Everyone does it.
+  > **We make it easier.**
+- Sub-headline:
+  > Daily Fibre. Straightforward support for smoother mornings and more regular days. Plant-based. No sugar. No faff.
+- Primary CTA: **Pre-order — £29**
+- Below CTA: *Ships Monday 18 May 2026. Charge today. Cancel any time before it ships.*
+- Trust chips:
+  - Plant-based
+  - No sugar
+  - Made in the UK
+  - Refund if we miss 18 May
+
+---
+
+## 4. Pillars strip
+
+*(No heading — headline is visually hidden for screen readers: "What Daily Fibre is built around")*
+
+| Pillar | Line |
+|---|---|
+| **Relief** | Feel lighter and less weighed down, without the harshness. |
+| **Release** | Gentle, reliable movement when things feel stuck. |
+| **Regularity** | Build a smoother, more predictable bathroom routine. |
+
+---
+
+## 5. How it works
+
+- Eyebrow: **How it fits in**
+- Heading: **Three steps. Then get on with your day.**
+- Sub-copy:
+  > Daily Fibre is built to sit quietly in your morning. Not fancy. Not fruity. Just straightforward daily fibre.
+
+**Step 01 — Mix**
+> One scoop into water. Stir and drink straight away.
+
+**Step 02 — Drink**
+> Unflavoured and simple. Easy to slot into your morning or evening.
+
+**Step 03 — Go**
+> Daily fibre supports smoother, more regular movement — usually within a few days.
+
+---
+
+## 6. Formula
+
+- Eyebrow: **The formula**
+- Heading: **One ingredient. Not glamorous. Very effective.**
+- Sub-copy:
+  > No sweeteners, no flavour systems, no filler fibres. Just psyllium husk — the fibre most research is actually built on.
+
+### The ingredient
+
+- Eyebrow: **The ingredient**
+- Wordmark: **Psyllium husk**
+- Body:
+  > A soluble plant fibre from the *Plantago ovata* plant. It absorbs water, adds bulk, and helps things move — gently and predictably.
+
+| Source | Type | Form |
+|---|---|---|
+| Plant-based | Soluble fibre | Milled powder |
+
+### What's not in it
+
+- No added sugar
+- No artificial sweeteners
+- No gums or fillers
+- No flavourings
+- No colours
+- No caffeine
+
+Footnote under "What's not in it":
+> Final nutritional panel will be confirmed on pack before shipping. The formula itself won't change: one ingredient, nothing bolted on.
+
+---
+
+## 7. Comparison
+
+- Eyebrow: **The difference**
+- Heading: **Most fibre brands vs. dump.**
+- Sub-copy:
+  > Most of the category is cluttered, clinical, or aimed at your gran. Daily Fibre is built for people who want something that looks, reads, and works like it's from this decade.
+
+| Feature | Most fibre | dump |
+|---|:---:|:---:|
+| Just fibre — no fillers or gums | – | ✓ |
+| Unflavoured, no sweeteners | – | ✓ |
+| Simple daily routine | ✓ | ✓ |
+| Made in the UK | – | ✓ |
+| Refund guarantee on pre-orders | – | ✓ |
+
+---
+
+## 8. Guarantee panel
+
+- Eyebrow: **The pre-order promise**
+- Heading: **Pre-ordering should feel safe, not speculative.**
+- Sub-copy:
+  > We're building Daily Fibre the right way — and we'd rather lose a sale than lose your trust. Here's exactly what you're getting when you pre-order.
+
+**Four points:**
+
+1. **Charge today, reserve your pouch.** One of the first 500 pouches in the first batch. Locked in the moment you pre-order.
+2. **Ships Monday 18 May 2026.** A real date, not a vague "coming soon". Tracked UK delivery, no surprises.
+3. **Full refund if we miss it.** If Daily Fibre isn't on its way to you by the ship date, we refund automatically. No forms, no calls, no hoops.
+4. **Cancel any time before shipping.** Change your mind before it ships? Email us and we'll cancel and refund in full.
+
+- CTA: **Pre-order Daily Fibre — £29**
+- Under CTA: *Secure checkout by Stripe · Free UK shipping*
+
+---
+
+## 9. Founder note
+
+- Eyebrow: **A note from the founder**
+- Pull-quote heading:
+  > "I built dump because every fibre product I tried either looked like it was from 1994, tasted like nothing in particular, or spoke to me like I was fragile."
+
+Body:
+
+> Feeling backed up or sluggish isn't a niche problem. Almost everyone has it at some point. And almost every brand in the aisle treats it like something to whisper about.
+
+> Daily Fibre is the product I wanted to buy — a plain, confident, plant-based daily fibre that does its job, looks like it belongs on your counter, and doesn't make you feel weird about why you're buying it.
+
+> Pre-ordering genuinely helps us get it made. If for any reason we don't ship on time, you get your money back automatically. That's the deal.
+
+Sign-off: *Founder — dump*
+
+---
+
+## 10. FAQ
+
+- Eyebrow: **Questions, plainly answered**
+- Heading: **Everything you might be wondering.**
+
+**Q: Why are you taking pre-orders?**
+A: We wanted to make Daily Fibre properly rather than rush a launch. Pre-orders let us commit to the first batch of 500 pouches and ship on a real date instead of a vague one. You're reserving one of those pouches now.
+
+**Q: When will it actually ship?**
+A: Monday 18 May 2026. It's in the calendar. If we miss it for any reason, you get a full refund automatically — no form, no email chain.
+
+**Q: What if you're delayed?**
+A: Then we refund you in full before the original ship date passes. We'd rather return your money than make you chase it.
+
+**Q: Can I cancel before it ships?**
+A: Yes. Email hello@dump.example any time before Monday 18 May 2026 and we'll cancel and refund you in full.
+
+**Q: What's actually in it?**
+A: One ingredient: psyllium husk. That's the whole list. No sugar, no sweeteners, no gums, no flavour systems, no filler fibres. Final nutritional panel confirmed on pack before shipping.
+
+**Q: What does it taste like?**
+A: Unflavoured. Not fancy. Best taken quickly. Worth it for what comes after.
+
+**Q: How big is the pouch?**
+A: 250g per pouch. One 5g scoop a day gets you around 50 servings — close to two months per pouch.
+
+**Q: Is it safe to take every day?**
+A: Daily Fibre is designed for regular daily use. If you're pregnant, breastfeeding, on medication, or managing a gut condition, check with your doctor first — same as with any supplement.
+
+**Q: Do you ship outside the UK?**
+A: Not yet. The first batch is UK-only so we can make sure delivery is clean and fast. International is on the roadmap.
+
+**Q: How much is Daily Fibre?**
+A: £29 for a 50-serving pouch, with free UK shipping. That's your locked-in pre-order price.
+
+---
+
+## 11. Email capture
+
+- Eyebrow: **Not ready yet?**
+- Heading: **Get 10% off when we launch.**
+- Sub-copy:
+  > One email when it ships. No weekly fluff, no unsubscribe games. Unsubscribe any time.
+- Input placeholder: `you@yours.com`
+- Button: **Keep me posted** (becomes **Saving…** then **Saved**)
+- Success message: *You're on the list. We'll email you when it ships.*
+
+---
+
+## 12. Footer
+
+**Wordmark column:**
+- **dump**
+- Everyone does it. We make it easier.
+
+**Company column:**
+- Pre-order
+- Contact
+
+**Legal column:**
+- Privacy
+- Terms
+- Refund policy
+
+**Bottom bar:**
+- © 2026 dump. All rights reserved.
+- Not intended to diagnose, treat, cure, or prevent any disease. Speak to your GP if you have concerns.
+
+---
+
+## 13. Sticky mobile CTA bar
+
+- Product label: **Daily Fibre**
+- Sub-line: *Ships 18 May. Refund if we miss it.*
+- Button: **Pre-order — £29**
+
+---
+
+## 14. Success page (post-checkout)
+
+- Eyebrow: **Pre-order confirmed**
+- Heading: **You're in. Thanks for backing Daily Fibre.**
+- Sub-copy:
+  > Your pouch is reserved from the first batch. We'll send tracking the moment it's on its way.
+
+**Three-column summary card:**
+
+| Ship date | Guarantee | Receipt |
+|---|---|---|
+| Monday 18 May 2026 | Full refund if we miss it | Check your inbox from Stripe |
+
+**Footer note:**
+> Anything at all, reply to your Stripe receipt or email hello@dump.example. We read everything.
+
+- Back button: **Back to home**
+
+---
+
+## 15. Stripe Checkout custom text
+
+Shown inside the Stripe Checkout page itself:
+
+- Submit message:
+  > You're reserving one pouch of Daily Fibre. Ships Monday 18 May 2026. Full refund if we miss it.
+- Shipping address note:
+  > Currently shipping to UK addresses only.
+
+---
+
+## 16. SEO metadata
+
+- Title: **dump — Everyone does it. We make it easier.**
+- Description:
+  > Daily Fibre by dump. Support for smoother mornings, less bloat, and more regular days. Plant-based, no sugar, made in the UK.
+- OG locale: `en_GB`

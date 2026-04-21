@@ -1,0 +1,238 @@
+# dump — Daily Fibre pre-order landing
+
+A single-page Next.js site that takes real pre-orders via Stripe Checkout. Built to feel premium, calm, and trustworthy for a pre-launch with no reviews or social proof yet.
+
+> Everyone does it. We make it easier.
+
+---
+
+## Stack
+
+- **Next.js 14** (App Router) + **TypeScript**
+- **Tailwind CSS** with brand tokens locked to the `dump` guidelines
+- **Stripe** Node SDK (server) + Checkout Session flow
+- **`next/font`** loading Playfair Display (wordmark only) and Inter (everything else)
+- Deploys cleanly to **Vercel**
+
+---
+
+## Getting started
+
+### 1. Install
+
+```bash
+npm install
+```
+
+### 2. Configure environment
+
+```bash
+cp .env.local.example .env.local
+```
+
+Then fill in:
+
+- `STRIPE_SECRET_KEY` — from https://dashboard.stripe.com/apikeys (use test keys first)
+- `STRIPE_PRICE_ID` — see "Creating the Stripe product" below
+- `STRIPE_WEBHOOK_SECRET` — see "Meta Conversions API (server-side tracking)" below
+- `META_CAPI_ACCESS_TOKEN` — see "Meta Conversions API (server-side tracking)" below
+- `META_CAPI_TEST_EVENT_CODE` — optional, for testing CAPI in Events Manager
+- `NEXT_PUBLIC_SITE_URL` — `http://localhost:3000` locally, your real domain in production
+
+### 3. Run
+
+```bash
+npm run dev
+```
+
+Open http://localhost:3000.
+
+---
+
+## Creating the Stripe product
+
+1. Go to Stripe Dashboard → **Products** → **Add product**.
+2. Name: `dump Daily Fibre — Pre-order`.
+3. Add a **one-time** price in **GBP** (e.g. `£29.00`).
+4. Copy the generated **price ID** (starts with `price_…`) into `.env.local` as `STRIPE_PRICE_ID`.
+5. Test with Stripe test card `4242 4242 4242 4242`, any future expiry, any CVC.
+
+Stripe sends the customer an email receipt automatically after checkout. You fulfill pre-orders manually (or via CSV export) when the batch ships.
+
+### When you go live
+
+- Swap test keys for live keys in your hosting environment variables.
+- Make sure `NEXT_PUBLIC_SITE_URL` is set to your real domain so Stripe redirects work.
+- Flip the Stripe dashboard out of test mode.
+
+---
+
+## Meta Conversions API (server-side tracking)
+
+Browser-only Pixel tracking loses 15–30% of events to ad-blockers, iOS privacy, and Safari ITP. The Conversions API sends the same events server-side so Meta can match them and your ad optimisation doesn't go blind.
+
+**How it's wired here**
+
+- Browser Pixel fires `PageView`, `InitiateCheckout`, `Purchase` (components `MetaPixel.tsx`, `PreOrderButton.tsx`, `TrackPurchase.tsx`).
+- Server fires the same `InitiateCheckout` from `/api/checkout` and the same `Purchase` from the Stripe webhook at `/api/stripe/webhook`.
+- Each event carries a shared `event_id` so Meta dedupes browser + server into a single event:
+  - `InitiateCheckout` — a UUID generated client-side, passed through to the server and stored in Stripe session metadata.
+  - `Purchase` — the Stripe `session_id`, available on both `/success` (browser) and in the webhook (server).
+
+**Setup (one-time)**
+
+1. **Generate the CAPI access token.** In Meta Events Manager → your pixel → **Settings** → **Conversions API** → **Generate access token**. Paste into `META_CAPI_ACCESS_TOKEN`.
+2. **Create the Stripe webhook.** Stripe dashboard → **Developers → Webhooks → Add endpoint**:
+   - URL: `https://<your-domain>/api/stripe/webhook`
+   - Event to send: `checkout.session.completed`
+   - Copy the signing secret (`whsec_...`) into `STRIPE_WEBHOOK_SECRET`.
+3. **Test before going live.** In Events Manager → **Test events** tab, grab the `TEST#####` code and drop it into `META_CAPI_TEST_EVENT_CODE`. Events fire into the test view instead of live reporting until you clear that variable.
+
+**Local testing**
+
+```bash
+# Forward real Stripe webhooks to localhost while you develop:
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+# The CLI prints a whsec_... on startup — paste it into STRIPE_WEBHOOK_SECRET.
+
+# In another terminal, trigger a purchase:
+stripe trigger checkout.session.completed
+```
+
+Then watch:
+- **Events Manager → Test events** — you should see `InitiateCheckout` and `Purchase` arrive with `Browser` + `Server` ticked.
+- **Meta Pixel Helper** (Chrome extension) — confirms browser events fire with the right values.
+
+**Before running paid traffic**
+
+- The pixel + CAPI currently load unconditionally. For UK/EU paid traffic you should gate both behind a cookie banner so you're ICO/GDPR compliant. Happy to wire a minimal consent banner when you're ready.
+- Clear `META_CAPI_TEST_EVENT_CODE` in your production environment so events count as real conversions, not test events.
+
+---
+
+## Editing the offer
+
+All tweakable copy lives in one place: [`lib/config.ts`](lib/config.ts).
+
+```ts
+export const PRODUCT = {
+  name: 'Daily Fibre',
+  pricePence: 2900,
+  priceGBP: '£29',
+  // ...
+};
+
+export const LAUNCH = {
+  shipDateLong: 'Monday 18 May 2026',
+  shipDateShort: '18 May',
+  shipDateISO: '2026-05-18',
+  batchSize: 500,
+};
+```
+
+Change the ship date, batch size, or price string here and it flows through the hero, announcement bar, guarantee panel, FAQ, and sticky mobile CTA.
+
+> The real price is set on the Stripe side via `STRIPE_PRICE_ID`. Keep the `priceGBP` string in `config.ts` in sync with the Stripe price so the on-page number matches the checkout number.
+
+---
+
+## Project structure
+
+```
+app/
+  layout.tsx              // fonts, metadata, global shell
+  page.tsx                // landing page composition
+  globals.css             // tailwind + base tokens
+  success/page.tsx        // post-payment thank-you page
+  api/checkout/route.ts   // creates the Stripe Checkout Session + server InitiateCheckout
+  api/stripe/webhook/route.ts  // Stripe webhook -> Meta CAPI Purchase event
+components/
+  Announcement.tsx
+  Nav.tsx
+  Hero.tsx
+  Pillars.tsx
+  HowItWorks.tsx
+  Formula.tsx
+  Comparison.tsx
+  Guarantee.tsx
+  FounderNote.tsx
+  FAQ.tsx
+  EmailCapture.tsx
+  Footer.tsx
+  StickyCTA.tsx
+  PreOrderButton.tsx      // client component; posts to /api/checkout
+  ImagePlaceholder.tsx
+lib/
+  config.ts               // all campaign-level constants
+  stripe.ts               // server-only Stripe client
+  pixel.ts                // typed wrapper around window.fbq (browser Pixel)
+  meta-capi.ts            // server-only Conversions API client
+public/
+  main-product-image.png  // your existing product shot
+```
+
+---
+
+## Design tokens
+
+Defined in [`tailwind.config.ts`](tailwind.config.ts):
+
+- `cream` `#F7F2EC` — background
+- `ink` `#2A1C13` — primary text
+- `cocoa` `#5A3A29` — brand accent
+- `tape` `#E6D8C7` — hairlines, dividers
+- `muted` `#8A6A50` — secondary text
+
+Font families:
+
+- `font-serif` — Playfair Display (reserved for the `dump` wordmark and section headlines)
+- `font-sans` — Inter (body, UI, everything else)
+
+---
+
+## Placeholders you'll want to replace
+
+- Secondary lifestyle imagery (the "Image placeholder" boxes in *How it works*, *Formula*, and *Founder note*)
+- Founder headshot in `FounderNote.tsx`
+- Favicon and an OG share image at `public/og-image.png`
+- Final ingredient list and nutrition panel (`components/Formula.tsx`)
+- Real privacy, terms, and refund policy pages (footer links are stubs to `#`)
+- Email capture provider wiring — see TODO in `components/EmailCapture.tsx`
+- Contact email address (`SITE.contactEmail` in `lib/config.ts`)
+
+---
+
+## Deploying to Vercel
+
+1. Push this repo to GitHub.
+2. In Vercel, **Import Project** from that repo.
+3. Under **Environment Variables**, add:
+   - `STRIPE_SECRET_KEY`
+   - `STRIPE_PRICE_ID`
+   - `STRIPE_WEBHOOK_SECRET`
+   - `META_CAPI_ACCESS_TOKEN`
+   - `NEXT_PUBLIC_SITE_URL` (your custom domain)
+4. Deploy, then go back to the Stripe dashboard and point the webhook endpoint at `https://<your-domain>/api/stripe/webhook`.
+
+---
+
+## Out of scope for v1
+
+- Subscriptions or bundles (intentionally single SKU)
+- Webhook-driven fulfillment automation (Stripe receipts are sufficient for the pre-order batch)
+- Multi-country shipping (GB only on first batch)
+- CMS — all copy is in React components + `lib/config.ts`
+- Reviews widget (nothing to review yet)
+
+Add a `/api/webhook` route later when you wire email marketing (Klaviyo, Mailchimp) or automated shipping tools.
+
+---
+
+## Scripts
+
+```bash
+npm run dev     # local dev
+npm run build   # production build
+npm run start   # serve the production build
+npm run lint    # lint
+```
