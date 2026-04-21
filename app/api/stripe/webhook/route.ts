@@ -74,35 +74,46 @@ export async function POST(request: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  // The session from the webhook event doesn't always include customer
-  // details or shipping in the envelope; retrieve the full object to be safe.
-  const full = await stripe.checkout.sessions.retrieve(session.id, {
-    expand: ['customer_details', 'shipping_details'],
-  });
+  const checkoutSession = session as Stripe.Checkout.Session & {
+    collected_information?: {
+      shipping_details?: {
+        address?: Stripe.Address | null;
+        name?: string | null;
+      } | null;
+    } | null;
+    shipping_details?: {
+      address?: Stripe.Address | null;
+      name?: string | null;
+    } | null;
+  };
 
   // Respect the consent the user gave at the moment they clicked pre-order.
   // It's persisted in session metadata by /api/checkout so this webhook
   // (which runs without any browser context) still has a reliable signal.
-  const marketingConsent = full.metadata?.marketing_consent === 'true';
+  const marketingConsent = checkoutSession.metadata?.marketing_consent === 'true';
   if (!marketingConsent) {
     return;
   }
 
-  const customer = full.customer_details;
-  const shipping = full.shipping_details;
+  const customer = checkoutSession.customer_details;
+  // Stripe moved shipping details under collected_information on newer API versions.
+  const shipping =
+    checkoutSession.collected_information?.shipping_details ??
+    // Backwards-compatible fallback for older API versions.
+    checkoutSession.shipping_details;
 
   const addressSource = shipping?.address ?? customer?.address ?? null;
   const nameSource = shipping?.name ?? customer?.name ?? '';
   const [firstName, ...rest] = nameSource.trim().split(/\s+/);
   const lastName = rest.join(' ');
 
-  const amountTotalPence = full.amount_total ?? PRODUCT.pricePence;
-  const currency = (full.currency ?? 'gbp').toUpperCase();
+  const amountTotalPence = checkoutSession.amount_total ?? PRODUCT.pricePence;
+  const currency = (checkoutSession.currency ?? 'gbp').toUpperCase();
 
   await sendCapiEvent({
     eventName: 'Purchase',
-    eventId: full.id, // Stripe session_id — matches the browser Purchase on /success.
-    eventSourceUrl: `${SITE.url}/success?session_id=${full.id}`,
+    eventId: checkoutSession.id, // Stripe session_id — matches the browser Purchase on /success.
+    eventSourceUrl: `${SITE.url}/success?session_id=${checkoutSession.id}`,
     actionSource: 'website',
     userData: {
       email: customer?.email ?? null,
@@ -112,7 +123,10 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       city: addressSource?.city ?? null,
       postcode: addressSource?.postal_code ?? null,
       country: addressSource?.country ?? null,
-      externalId: full.customer && typeof full.customer === 'string' ? full.customer : null,
+      externalId:
+        checkoutSession.customer && typeof checkoutSession.customer === 'string'
+          ? checkoutSession.customer
+          : null,
     },
     customData: {
       value: amountTotalPence / 100,
@@ -121,7 +135,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       content_ids: ['daily-fibre-pre-order'],
       content_type: 'product',
       num_items: 1,
-      order_id: full.id,
+      order_id: checkoutSession.id,
     },
   });
 }
