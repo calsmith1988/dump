@@ -2,10 +2,17 @@ import Image from 'next/image';
 import PreOrderButton from './PreOrderButton';
 import { LAUNCH, PRODUCT } from '@/lib/config';
 
-const chips = [
+const desktopChips = [
   'Plant-based',
   'No sugar',
   `Refund if we miss ${LAUNCH.shipDateShort}`,
+];
+
+const mobileChips = [
+  `Ships ${LAUNCH.shipDateShort}`,
+  `${PRODUCT.balanceGBP} before dispatch`,
+  `Refund if we miss ${LAUNCH.shipDateShort}`,
+  'Cancel anytime',
 ];
 
 export default function Hero() {
@@ -32,8 +39,8 @@ export default function Hero() {
             </span>
           </div>
 
-          <ul className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted sm:mt-8 sm:gap-x-5">
-            {chips.map((chip) => (
+          <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-muted sm:hidden">
+            {mobileChips.map((chip) => (
               <li key={chip} className="chip">
                 <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-muted/60" aria-hidden />
                 {chip}
@@ -41,9 +48,14 @@ export default function Hero() {
             ))}
           </ul>
 
-          <p className="mt-5 text-sm text-muted sm:hidden">
-            Ships {LAUNCH.shipDateShort}. {PRODUCT.balanceGBP} before dispatch. Cancel any time.
-          </p>
+          <ul className="mt-8 hidden flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted sm:flex">
+            {desktopChips.map((chip) => (
+              <li key={chip} className="chip">
+                <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-muted/60" aria-hidden />
+                {chip}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="relative order-1 lg:order-2">
