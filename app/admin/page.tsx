@@ -6,6 +6,7 @@ import { requireAdminAuth } from '@/lib/admin-auth';
 import {
   bulkChargeRemainingAction,
   chargeRemainingBalanceAction,
+  deletePreorderAction,
   logoutAction,
   refundDepositAction,
   refundOrderAction,
@@ -152,12 +153,13 @@ export default async function AdminPage({ searchParams }: Props) {
           </div>
         ) : null}
 
-        <form action={bulkChargeRemainingAction} className="mt-6">
+        <div className="mt-6">
+          <form id="bulk-charge-form" action={bulkChargeRemainingAction} />
           <div className="mb-4 flex items-center justify-between gap-3">
             <p className="text-sm text-ink/70">
               {preorders.length} preorder{preorders.length === 1 ? '' : 's'}
             </p>
-            <button type="submit" className="btn-primary">
+            <button type="submit" form="bulk-charge-form" className="btn-primary">
               Charge selected balances
             </button>
           </div>
@@ -188,6 +190,7 @@ export default async function AdminPage({ searchParams }: Props) {
                           type="checkbox"
                           name="preorderIds"
                           value={preorder.id}
+                          form="bulk-charge-form"
                           disabled={!canAttemptBalanceCharge(preorder.status)}
                           className="h-4 w-4 rounded border-tape text-cocoa focus:ring-cocoa"
                         />
@@ -273,11 +276,12 @@ export default async function AdminPage({ searchParams }: Props) {
                               </button>
                             </form>
                           ) : null}
-                          {!canAttemptBalanceCharge(preorder.status) &&
-                          !canRefundDeposit(preorder.status) &&
-                          !canRefundOrder(preorder.status) ? (
-                            <span className="text-xs text-muted">No actions available</span>
-                          ) : null}
+                          <form action={deletePreorderAction}>
+                            <input type="hidden" name="preorderId" value={preorder.id} />
+                            <button type="submit" className="btn-secondary text-xs">
+                              Delete row
+                            </button>
+                          </form>
                         </div>
                       </td>
                     </tr>
@@ -293,7 +297,7 @@ export default async function AdminPage({ searchParams }: Props) {
               </table>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </main>
   );

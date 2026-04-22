@@ -10,6 +10,7 @@ import {
 } from '@/lib/admin-auth';
 import {
   chargeRemainingBalance,
+  deletePreorder,
   refundDeposit,
   refundOrder,
 } from '@/lib/preorder-service';
@@ -97,4 +98,17 @@ export async function bulkChargeRemainingAction(formData: FormData) {
 
   revalidatePath('/admin');
   redirect(toAdminNotice(`Attempted balance charges for ${attempted} preorder(s).`));
+}
+
+export async function deletePreorderAction(formData: FormData) {
+  await requireAdminAuth();
+  const preorderId = String(formData.get('preorderId') ?? '');
+
+  if (!preorderId) {
+    redirect(toAdminNotice('Missing preorder id for delete.'));
+  }
+
+  await deletePreorder(preorderId);
+  revalidatePath('/admin');
+  redirect(toAdminNotice('Preorder row deleted from the database.'));
 }

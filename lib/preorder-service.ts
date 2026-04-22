@@ -551,6 +551,20 @@ export async function refundOrder(preorderId: string) {
   });
 }
 
+export async function deletePreorder(preorderId: string) {
+  const preorder = await db.preorder.findUnique({
+    where: { id: preorderId },
+  });
+
+  if (!preorder) {
+    throw new Error('Preorder not found.');
+  }
+
+  await db.preorder.delete({
+    where: { id: preorderId },
+  });
+}
+
 export async function syncBalancePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
   if (paymentIntent.metadata?.charge_type !== BALANCE_CHARGE_TYPE) {
     return null;
