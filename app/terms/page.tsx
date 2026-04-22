@@ -124,8 +124,8 @@ export default function TermsPage() {
         </p>
         <p>
           In addition, if we do not dispatch by the shipping date we have
-          specifically promised for your order, we will refund you in full if you
-          ask us to cancel before dispatch.
+          specifically promised for your order, we will refund you in full
+          automatically.
         </p>
         <p>
           If you are a UK consumer, you may also have cancellation rights under

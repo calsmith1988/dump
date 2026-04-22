@@ -56,6 +56,13 @@ function canRefundOrder(status: PreorderStatus) {
   return status === 'balance_succeeded';
 }
 
+function getDisplayedRemainingPence(preorder: {
+  status: PreorderStatus;
+  remainingAmountPence: number;
+}) {
+  return preorder.status === 'balance_succeeded' ? 0 : preorder.remainingAmountPence;
+}
+
 function formatAddress(preorder: {
   addressLine1: string | null;
   addressLine2: string | null;
@@ -219,7 +226,7 @@ export default async function AdminPage({ searchParams }: Props) {
                         {formatPence(preorder.depositAmountPence)}
                       </td>
                       <td className="px-4 py-4 text-ink">
-                        {formatPence(preorder.remainingAmountPence)}
+                        {formatPence(getDisplayedRemainingPence(preorder))}
                       </td>
                       <td className="px-4 py-4 text-xs text-muted">
                         <div>{formatDate(preorder.createdAt)}</div>

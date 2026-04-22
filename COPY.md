@@ -20,15 +20,15 @@ Values wrapped in `{curly braces}` are driven by [`lib/config.ts`](lib/config.ts
 - **Serving size:** 5g (one scoop)
 - **Servings per pouch:** 50
 - **Shipping line:** Free UK shipping
-- **Ship date (long):** Monday 18 May 2026
-- **Ship date (short):** 18 May
+- **Ship date (long):** Monday 29 June 2026
+- **Ship date (short):** 29 June
 - **Batch size:** 500
 
 ---
 
 ## 1. Announcement bar
 
-> Pre-orders open. First batch of {500}. Ships {Monday 18 May 2026}.
+> Pre-orders open. First batch of {500}. Ships {Monday 29 June 2026}.
 
 ---
 
@@ -48,12 +48,12 @@ Values wrapped in `{curly braces}` are driven by [`lib/config.ts`](lib/config.ts
 - Sub-headline:
   > Daily Fibre. Straightforward support for smoother mornings and more regular days. Plant-based. No sugar. No faff.
 - Primary CTA: **Pay £1 today**
-- Below CTA: *Ships Monday 18 May 2026. We'll charge the remaining £28 before dispatch. Cancel any time before that happens.*
+- Below CTA: *Ships Monday 29 June 2026. We'll charge the remaining £28 before dispatch. Cancel any time before that happens.*
 - Trust chips:
   - Plant-based
   - No sugar
   - Made in the UK
-  - Refund if we miss 18 May
+  - Refund if we miss 29 June
 
 ---
 
@@ -146,7 +146,7 @@ Footnote under "What's not in it":
 **Four points:**
 
 1. **Pay £1 today, reserve your pouch.** One of the first 500 pouches in the first batch. Locked in the moment you pay your deposit.
-2. **Ships Monday 18 May 2026.** A real date, not a vague "coming soon". We'll charge the remaining £28 before dispatch using your saved payment method.
+2. **Ships Monday 29 June 2026.** A real date, not a vague "coming soon". We'll charge the remaining £28 before dispatch using your saved payment method.
 3. **Full refund if we miss it.** If Daily Fibre isn't on its way to you by the ship date, we refund automatically. No forms, no calls, no hoops.
 4. **Cancel before the balance is charged.** Change your mind before the final payment runs? Email us and we'll refund your deposit in full.
 
@@ -182,10 +182,10 @@ Sign-off: *Founder — dump*
 A: We wanted to make Daily Fibre properly rather than rush a launch. Paying a £1 deposit lets us commit to the first batch of 500 pouches and ship on a real date instead of a vague one.
 
 **Q: When will it actually ship?**
-A: Monday 18 May 2026. It's in the calendar. We'll charge the remaining £28 before dispatch using your saved payment method. If we miss it for any reason, you get a full refund automatically — no form, no email chain.
+A: Monday 29 June 2026. It's in the calendar. We'll charge the remaining £28 before dispatch using your saved payment method. If we miss it for any reason, you get a full refund automatically — no form, no email chain.
 
 **Q: What if you're delayed?**
-A: Then we refund you in full before the original ship date passes. We'd rather return your money than make you chase it.
+A: Then we refund you in full automatically. We'd rather return your money than make you chase it.
 
 **Q: Can I cancel before the balance is charged?**
 A: Yes. Email hey@trydump.co any time before the final payment runs and we'll cancel and refund your £1 deposit in full.
@@ -265,7 +265,7 @@ A: £29 in total for a 50-serving pouch, with free UK shipping. You pay £1 toda
 
 | Ship date | Balance due later | Receipt |
 |---|---|---|
-| Monday 18 May 2026 | £28 before dispatch | Check your inbox from Stripe |
+| Monday 29 June 2026 | £28 before dispatch | Check your inbox from Stripe |
 
 **Footer note:**
 > Anything at all, reply to your Stripe receipt or email hey@trydump.co. We read everything.
@@ -279,7 +279,7 @@ A: £29 in total for a 50-serving pouch, with free UK shipping. You pay £1 toda
 Shown inside the Stripe Checkout page itself:
 
 - Submit message:
-  > Pay £1 today to reserve your pouch. We'll charge the remaining £28 before dispatch using your saved payment method. Full refund if we miss 18 May.
+  > Pay £1 today to reserve your pouch. We'll charge the remaining £28 before dispatch using your saved payment method. Full refund if we miss 29 June.
 - Shipping address note:
   > Currently shipping to UK addresses only.
 

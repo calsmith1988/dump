@@ -64,9 +64,9 @@ export const PRODUCT = {
 };
 
 export const LAUNCH = {
-  shipDateLong: 'Monday 18 May 2026',
-  shipDateShort: '18 May',
-  shipDateISO: '2026-05-18',
+  shipDateLong: 'Monday 29 June 2026',
+  shipDateShort: '29 June',
+  shipDateISO: '2026-06-29',
   batchSize: 500,
 };
 
@@ -78,7 +78,7 @@ export const PREORDER = {
 };
 
 export const GUARANTEE = {
-  headline: "If we miss 18 May, you get a full refund. No forms, no calls.",
+  headline: "If we miss 29 June, you get a full refund. No forms, no calls.",
   days: 30,
 };
 

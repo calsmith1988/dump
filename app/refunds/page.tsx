@@ -42,8 +42,8 @@ export default function RefundsPage() {
       <LegalSection title="3. If we miss the promised shipping date">
         <p>
           Our current target shipping date is {LAUNCH.shipDateLong}. If we tell
-          you a specific dispatch date and then do not dispatch on time, you may
-          cancel before dispatch for a full refund of any amount you have paid.
+          you a specific dispatch date and then do not dispatch on time, we will
+          issue a full refund automatically for any amount you have paid.
         </p>
       </LegalSection>
 

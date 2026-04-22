@@ -175,21 +175,26 @@ async function createRecoveryInvoice(preorder: Preorder) {
 async function sendRecoveryEmail(preorder: Preorder, recoveryUrl: string | null) {
   const resend = getResendClient();
   if (!resend || !recoveryUrl) return;
+  const { firstName } = getNameParts(preorder.name);
 
   await resend.emails.send({
     from: EMAIL.from,
     to: preorder.email,
-    subject: `${PRODUCT.name}: complete your remaining payment`,
+    subject: `Action needed: complete your remaining payment for dump ${PRODUCT.name}`,
     text: [
-      `Hi ${preorder.name || 'there'},`,
+      `Hi ${firstName || 'there'},`,
       '',
-      `We tried to charge the remaining ${PRODUCT.balanceGBP} for your ${PRODUCT.name} preorder, but the saved payment method didn't go through.`,
+      `A quick heads-up: we tried to take the remaining ${PRODUCT.balanceGBP} for your ${PRODUCT.name} preorder, but the saved payment method didn't go through.`,
       '',
-      `You can complete payment here: ${recoveryUrl}`,
+      'Your preorder is still reserved for now. To complete it, use the secure payment link below:',
       '',
-      `If you need help or would rather cancel before dispatch, email us at ${SITE.contactEmail}.`,
+      recoveryUrl,
       '',
       `Target ship date: ${LAUNCH.shipDateLong}`,
+      '',
+      `Need help or want to cancel before dispatch? Just email ${SITE.contactEmail} and we'll sort it.`,
+      '',
+      SITE.name,
     ].join('\n'),
   });
 }

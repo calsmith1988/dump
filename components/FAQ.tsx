@@ -11,7 +11,7 @@ const faqs = [
   },
   {
     q: 'What if you’re delayed?',
-    a: 'Then we refund you in full before the original ship date passes. We’d rather return your money than make you chase it.',
+    a: 'Then we refund you in full automatically. We’d rather return your money than make you chase it.',
   },
   {
     q: 'Can I cancel before the balance is charged?',

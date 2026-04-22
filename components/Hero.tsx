@@ -6,7 +6,7 @@ const chips = [
   'Plant-based',
   'No sugar',
   'Made in the UK',
-  'Refund if we miss 18 May',
+  `Refund if we miss ${LAUNCH.shipDateShort}`,
 ];
 
 export default function Hero() {
