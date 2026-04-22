@@ -6,7 +6,6 @@ import { requireAdminAuth } from '@/lib/admin-auth';
 import {
   bulkChargeRemainingAction,
   chargeRemainingBalanceAction,
-  deletePreorderAction,
   logoutAction,
   refundDepositAction,
   refundOrderAction,
@@ -283,12 +282,6 @@ export default async function AdminPage({ searchParams }: Props) {
                               </button>
                             </form>
                           ) : null}
-                          <form action={deletePreorderAction}>
-                            <input type="hidden" name="preorderId" value={preorder.id} />
-                            <button type="submit" className="btn-secondary text-xs">
-                              Delete row
-                            </button>
-                          </form>
                         </div>
                       </td>
                     </tr>

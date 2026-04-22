@@ -121,6 +121,101 @@ function isUniqueConstraintError(error: unknown) {
   );
 }
 
+function formatGBPFromPence(pence: number) {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(pence / 100);
+}
+
+async function sendCustomerEmail({
+  to,
+  subject,
+  text,
+}: {
+  to: string;
+  subject: string;
+  text: string;
+}) {
+  const resend = getResendClient();
+  if (!resend) return;
+
+  try {
+    await resend.emails.send({
+      from: EMAIL.from,
+      to,
+      subject,
+      text,
+    });
+  } catch (error) {
+    console.error('[email] Failed to send customer email', error);
+  }
+}
+
+async function sendDepositPaidEmail(preorder: Preorder) {
+  const { firstName } = getNameParts(preorder.name);
+
+  await sendCustomerEmail({
+    to: preorder.email,
+    subject: `You’re in: your dump ${PRODUCT.name} deposit is confirmed`,
+    text: [
+      `Hi ${firstName || 'there'},`,
+      '',
+      `Thanks — your ${formatGBPFromPence(preorder.depositAmountPence)} deposit for dump ${PRODUCT.name} is confirmed.`,
+      '',
+      'Your preorder is reserved from the first batch.',
+      `Target ship date: ${LAUNCH.shipDateLong}`,
+      `We’ll charge the remaining ${formatGBPFromPence(preorder.remainingAmountPence)} before dispatch using the payment method you saved with Stripe.`,
+      '',
+      `If you need help or want to cancel before the balance is charged, just email ${SITE.contactEmail}.`,
+      '',
+      SITE.name,
+    ].join('\n'),
+  });
+}
+
+async function sendBalancePaidEmail(preorder: Preorder) {
+  const { firstName } = getNameParts(preorder.name);
+
+  await sendCustomerEmail({
+    to: preorder.email,
+    subject: `Your remaining payment for dump ${PRODUCT.name} is complete`,
+    text: [
+      `Hi ${firstName || 'there'},`,
+      '',
+      `We’ve successfully taken the remaining ${formatGBPFromPence(preorder.remainingAmountPence)} for your dump ${PRODUCT.name} preorder.`,
+      '',
+      `Your order is now fully paid and on track for dispatch by ${LAUNCH.shipDateLong}.`,
+      '',
+      `If you need anything, just email ${SITE.contactEmail}.`,
+      '',
+      SITE.name,
+    ].join('\n'),
+  });
+}
+
+async function sendRefundProcessedEmail(preorder: Preorder, refundedAmountPence: number) {
+  const { firstName } = getNameParts(preorder.name);
+
+  await sendCustomerEmail({
+    to: preorder.email,
+    subject: `Your dump ${PRODUCT.name} payment has been refunded`,
+    text: [
+      `Hi ${firstName || 'there'},`,
+      '',
+      `We’ve issued a refund of ${formatGBPFromPence(refundedAmountPence)} for your dump ${PRODUCT.name} preorder.`,
+      '',
+      'Depending on your bank, it may take a few business days to show in your account.',
+      '',
+      `If you have any questions, email ${SITE.contactEmail} and we’ll help.`,
+      '',
+      SITE.name,
+    ].join('\n'),
+  });
+}
+
 async function createRecoveryInvoice(preorder: Preorder) {
   if (!preorder.stripeCustomerId) {
     throw new Error('Preorder is missing a Stripe customer.');
@@ -173,12 +268,10 @@ async function createRecoveryInvoice(preorder: Preorder) {
 }
 
 async function sendRecoveryEmail(preorder: Preorder, recoveryUrl: string | null) {
-  const resend = getResendClient();
-  if (!resend || !recoveryUrl) return;
+  if (!recoveryUrl) return;
   const { firstName } = getNameParts(preorder.name);
 
-  await resend.emails.send({
-    from: EMAIL.from,
+  await sendCustomerEmail({
     to: preorder.email,
     subject: `Action needed: complete your remaining payment for dump ${PRODUCT.name}`,
     text: [
@@ -272,7 +365,7 @@ export async function persistCompletedCheckoutSession(session: Stripe.Checkout.S
     }
   }
 
-  return db.preorder.upsert({
+  const preorder = await db.preorder.upsert({
     where: {
       stripeCheckoutSessionId: checkoutSession.id,
     },
@@ -321,6 +414,9 @@ export async function persistCompletedCheckoutSession(session: Stripe.Checkout.S
       marketingConsent: isTruthyMetadataValue(checkoutSession.metadata?.marketing_consent),
     },
   });
+
+  await sendDepositPaidEmail(preorder);
+  return preorder;
 }
 
 export async function chargeRemainingBalance(
@@ -392,7 +488,7 @@ export async function chargeRemainingBalance(
       const paidInvoice = await stripe.invoices.pay(finalizedInvoice.id);
 
       if (paidInvoice.status === 'paid') {
-        return db.preorder.update({
+        const updated = await db.preorder.update({
           where: { id: preorder.id },
           data: {
             status: 'balance_succeeded',
@@ -402,6 +498,9 @@ export async function chargeRemainingBalance(
             lastPaymentError: null,
           },
         });
+
+        await sendBalancePaidEmail(updated);
+        return updated;
       }
 
       return markBalanceFailed(
@@ -438,7 +537,7 @@ export async function chargeRemainingBalance(
     });
 
     if (paymentIntent.status === 'succeeded') {
-      return db.preorder.update({
+      const updated = await db.preorder.update({
         where: { id: preorder.id },
         data: {
           status: 'balance_succeeded',
@@ -448,6 +547,9 @@ export async function chargeRemainingBalance(
           lastPaymentError: null,
         },
       });
+
+      await sendBalancePaidEmail(updated);
+      return updated;
     }
 
     return markBalanceFailed(
@@ -490,7 +592,7 @@ export async function refundDeposit(preorderId: string) {
     },
   });
 
-  return db.preorder.update({
+  const updated = await db.preorder.update({
     where: { id: preorder.id },
     data: {
       status: 'refunded',
@@ -498,6 +600,9 @@ export async function refundDeposit(preorderId: string) {
       lastPaymentError: null,
     },
   });
+
+  await sendRefundProcessedEmail(updated, preorder.depositAmountPence);
+  return updated;
 }
 
 export async function refundOrder(preorderId: string) {
@@ -544,7 +649,7 @@ export async function refundOrder(preorderId: string) {
     },
   });
 
-  return db.preorder.update({
+  const updated = await db.preorder.update({
     where: { id: preorder.id },
     data: {
       status: 'refunded',
@@ -554,6 +659,12 @@ export async function refundOrder(preorderId: string) {
       recoveryUrl: null,
     },
   });
+
+  await sendRefundProcessedEmail(
+    updated,
+    preorder.depositAmountPence + preorder.remainingAmountPence,
+  );
+  return updated;
 }
 
 export async function deletePreorder(preorderId: string) {

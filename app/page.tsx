@@ -8,7 +8,6 @@ import Comparison from '@/components/Comparison';
 import Guarantee from '@/components/Guarantee';
 import FounderNote from '@/components/FounderNote';
 import FAQ from '@/components/FAQ';
-import EmailCapture from '@/components/EmailCapture';
 import Footer from '@/components/Footer';
 import StickyCTA from '@/components/StickyCTA';
 
@@ -26,7 +25,6 @@ export default function HomePage() {
         <Guarantee />
         <FounderNote />
         <FAQ />
-        <EmailCapture />
       </main>
       <Footer />
       <StickyCTA />
