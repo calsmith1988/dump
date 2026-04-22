@@ -16,7 +16,7 @@ export default function Nav() {
             href="#pre-order"
             className="inline-flex items-center gap-2 rounded border border-ink/90 bg-ink px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-cocoa hover:border-cocoa"
           >
-            Pre-order
+            Pay deposit
           </a>
         </nav>
       </div>

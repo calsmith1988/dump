@@ -29,7 +29,7 @@ export default function Hero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <PreOrderButton />
             <span className="text-sm text-muted">
-              Ships {LAUNCH.shipDateLong}. Charge today. Cancel any time before it ships.
+              Ships {LAUNCH.shipDateLong}. We&apos;ll charge the remaining {PRODUCT.balanceGBP} before dispatch. Cancel any time before that happens.
             </span>
           </div>
 

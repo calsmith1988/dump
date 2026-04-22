@@ -3,6 +3,13 @@ import type Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { PRODUCT, SITE } from '@/lib/config';
 import { sendCapiEvent } from '@/lib/meta-capi';
+import {
+  persistCompletedCheckoutSession,
+  recordStripeWebhookEvent,
+  syncBalancePaymentIntentFailed,
+  syncBalancePaymentIntentSucceeded,
+} from '@/lib/preorder-service';
+import { isDepositPreorderMetadata, isTruthyMetadataValue } from '@/lib/preorders';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -52,10 +59,25 @@ export async function POST(request: Request) {
   }
 
   try {
+    const isNewEvent = await recordStripeWebhookEvent(event.id, event.type);
+    if (!isNewEvent) {
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         await handleCheckoutCompleted(session);
+        break;
+      }
+      case 'payment_intent.succeeded': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await syncBalancePaymentIntentSucceeded(paymentIntent);
+        break;
+      }
+      case 'payment_intent.payment_failed': {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent;
+        await syncBalancePaymentIntentFailed(paymentIntent);
         break;
       }
       // Add more event types here as needed (refunds, disputes, etc.)
@@ -74,46 +96,33 @@ export async function POST(request: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  const checkoutSession = session as Stripe.Checkout.Session & {
-    collected_information?: {
-      shipping_details?: {
-        address?: Stripe.Address | null;
-        name?: string | null;
-      } | null;
-    } | null;
-    shipping_details?: {
-      address?: Stripe.Address | null;
-      name?: string | null;
-    } | null;
-  };
+  if (!isDepositPreorderMetadata(session.metadata)) {
+    return;
+  }
+
+  await persistCompletedCheckoutSession(session);
 
   // Respect the consent the user gave at the moment they clicked pre-order.
   // It's persisted in session metadata by /api/checkout so this webhook
   // (which runs without any browser context) still has a reliable signal.
-  const marketingConsent = checkoutSession.metadata?.marketing_consent === 'true';
+  const marketingConsent = isTruthyMetadataValue(session.metadata?.marketing_consent);
   if (!marketingConsent) {
     return;
   }
 
-  const customer = checkoutSession.customer_details;
-  // Stripe moved shipping details under collected_information on newer API versions.
-  const shipping =
-    checkoutSession.collected_information?.shipping_details ??
-    // Backwards-compatible fallback for older API versions.
-    checkoutSession.shipping_details;
-
-  const addressSource = shipping?.address ?? customer?.address ?? null;
-  const nameSource = shipping?.name ?? customer?.name ?? '';
+  const customer = session.customer_details;
+  const addressSource = customer?.address ?? null;
+  const nameSource = customer?.name ?? '';
   const [firstName, ...rest] = nameSource.trim().split(/\s+/);
   const lastName = rest.join(' ');
 
-  const amountTotalPence = checkoutSession.amount_total ?? PRODUCT.pricePence;
-  const currency = (checkoutSession.currency ?? 'gbp').toUpperCase();
+  const amountTotalPence = session.amount_total ?? PRODUCT.depositPence;
+  const currency = (session.currency ?? 'gbp').toUpperCase();
 
   await sendCapiEvent({
     eventName: 'Purchase',
-    eventId: checkoutSession.id, // Stripe session_id — matches the browser Purchase on /success.
-    eventSourceUrl: `${SITE.url}/success?session_id=${checkoutSession.id}`,
+    eventId: session.id, // Stripe session_id — matches the browser Purchase on /success.
+    eventSourceUrl: `${SITE.url}/success?session_id=${session.id}`,
     actionSource: 'website',
     userData: {
       email: customer?.email ?? null,
@@ -124,18 +133,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
       postcode: addressSource?.postal_code ?? null,
       country: addressSource?.country ?? null,
       externalId:
-        checkoutSession.customer && typeof checkoutSession.customer === 'string'
-          ? checkoutSession.customer
+        session.customer && typeof session.customer === 'string'
+          ? session.customer
           : null,
     },
     customData: {
       value: amountTotalPence / 100,
       currency,
-      content_name: PRODUCT.name,
-      content_ids: ['daily-fibre-pre-order'],
+      content_name: `${PRODUCT.name} deposit`,
+      content_ids: [PRODUCT.sku],
       content_type: 'product',
       num_items: 1,
-      order_id: checkoutSession.id,
+      order_id: session.id,
+      full_price_value: PRODUCT.pricePence / 100,
+      remaining_balance_value: PRODUCT.balancePence / 100,
     },
   });
 }

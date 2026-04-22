@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { LAUNCH, PRODUCT, SITE } from '@/lib/config';
+import { LAUNCH, PREORDER, PRODUCT, SITE } from '@/lib/config';
 import { getClientIp, getFbCookies, sendCapiEvent } from '@/lib/meta-capi';
+import { buildPreorderMetadata } from '@/lib/preorders';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -12,11 +13,10 @@ type CheckoutRequestBody = {
 };
 
 export async function POST(request: Request) {
-  if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_PRICE_ID) {
+  if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json(
       {
-        error:
-          'Stripe is not configured yet. Set STRIPE_SECRET_KEY and STRIPE_PRICE_ID in .env.local.',
+        error: 'Stripe is not configured yet. Set STRIPE_SECRET_KEY in .env.local.',
       },
       { status: 500 },
     );
@@ -32,40 +32,44 @@ export async function POST(request: Request) {
 
   const clientInitiateEventId = body.eventId;
   const marketingConsent = body.marketingConsent === true;
-  const origin = request.headers.get('origin') || SITE.url;
+  const origin = SITE.url;
+  const preorderMetadata = buildPreorderMetadata({
+    marketingConsent,
+    initiateCheckoutEventId: clientInitiateEventId,
+  });
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
+      customer_creation: 'always',
+      line_items: [
+        {
+          price_data: {
+            currency: 'gbp',
+            product_data: {
+              name: `${PRODUCT.name} preorder deposit`,
+              description: `Reserve one pouch now. Remaining ${PRODUCT.balanceGBP} charged before dispatch.`,
+            },
+            unit_amount: PRODUCT.depositPence,
+          },
+          quantity: 1,
+        },
+      ],
       shipping_address_collection: { allowed_countries: ['GB'] },
       phone_number_collection: { enabled: true },
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
       success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/#pre-order`,
+      metadata: preorderMetadata,
       payment_intent_data: {
-        description: `dump Daily Fibre — pre-order, ships ${LAUNCH.shipDateLong}`,
-        metadata: {
-          launch: 'daily-fibre-pre-order',
-          ship_date: LAUNCH.shipDateISO,
-          marketing_consent: marketingConsent ? 'true' : 'false',
-          ...(clientInitiateEventId
-            ? { initiate_checkout_event_id: clientInitiateEventId }
-            : {}),
-        },
-      },
-      metadata: {
-        launch: 'daily-fibre-pre-order',
-        ship_date: LAUNCH.shipDateISO,
-        marketing_consent: marketingConsent ? 'true' : 'false',
-        ...(clientInitiateEventId
-          ? { initiate_checkout_event_id: clientInitiateEventId }
-          : {}),
+        description: `dump Daily Fibre deposit — remaining ${PRODUCT.balanceGBP} before dispatch`,
+        setup_future_usage: 'off_session',
+        metadata: preorderMetadata,
       },
       custom_text: {
         submit: {
-          message: `You're reserving one pouch of Daily Fibre. Ships ${LAUNCH.shipDateLong}. Full refund if we miss it.`,
+          message: `Pay ${PRODUCT.depositGBP} today to reserve your pouch. We’ll charge the remaining ${PRODUCT.balanceGBP} before dispatch using your saved payment method. Full refund if we miss ${LAUNCH.shipDateShort}.`,
         },
         shipping_address: {
           message: 'Currently shipping to UK addresses only.',
@@ -95,12 +99,15 @@ export async function POST(request: Request) {
           fbc,
         },
         customData: {
-          value: PRODUCT.pricePence / 100,
+          value: PRODUCT.depositPence / 100,
           currency: 'GBP',
-          content_name: PRODUCT.name,
-          content_ids: ['daily-fibre-pre-order'],
+          content_name: `${PRODUCT.name} deposit`,
+          content_ids: [PRODUCT.sku],
           content_type: 'product',
           num_items: 1,
+          full_price_value: PRODUCT.pricePence / 100,
+          remaining_balance_value: PRODUCT.balancePence / 100,
+          balance_collection_mode: PREORDER.balanceCollectionMode,
         },
       });
     }

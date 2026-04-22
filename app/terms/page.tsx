@@ -38,9 +38,9 @@ export default function TermsPage() {
 
       <LegalSection title="2. About the product and pre-orders">
         <p>
-          {PRODUCT.name} is offered on this site as a pre-order product. This
-          means you are paying in advance to reserve stock from an upcoming batch
-          rather than buying an item that is already ready for immediate dispatch.
+          {PRODUCT.name} is offered on this site as a pre-order product. You pay
+          a deposit at checkout to reserve stock from an upcoming batch rather
+          than buying an item that is already ready for immediate dispatch.
         </p>
         <p>
           Our current target shipping date for the first batch is{' '}
@@ -48,7 +48,13 @@ export default function TermsPage() {
           we expressly say otherwise.
         </p>
         <p>
-          If we are unable to supply your pre-order, or if we decide not to
+          Before dispatch, we may charge the remaining balance for your preorder
+          using the payment method you saved with Stripe. If that charge fails,
+          we may contact you with a payment link or invoice so you can complete
+          payment manually before dispatch.
+        </p>
+        <p>
+          If we are unable to supply your preorder, or if we decide not to
           accept it, we will notify you and refund any payment already taken.
         </p>
       </LegalSection>
@@ -82,9 +88,11 @@ export default function TermsPage() {
           order. Prices may change at any time before you place an order.
         </p>
         <p>
-          Payments are processed securely by Stripe. By placing an order, you
-          authorise Stripe and us to take payment using your chosen payment
-          method.
+          For deposit preorders, the checkout page explains the deposit due
+          today and the remaining balance due later. By placing a preorder, you
+          authorise Stripe and us to take the deposit payment immediately and,
+          where applicable, to attempt the remaining balance before dispatch
+          using the payment method you saved with Stripe.
         </p>
         <p>
           Unless stated otherwise, prices shown on the site include any VAT that
@@ -110,8 +118,9 @@ export default function TermsPage() {
 
       <LegalSection title="7. Cancellations, refunds, and your consumer rights">
         <p>
-          You may cancel your pre-order at any time before dispatch for a full
-          refund by contacting us at {SITE.contactEmail}.
+          You may cancel your preorder at any time before we charge the
+          remaining balance, and we will refund the deposit you have paid by
+          contacting us at {SITE.contactEmail}.
         </p>
         <p>
           In addition, if we do not dispatch by the shipping date we have

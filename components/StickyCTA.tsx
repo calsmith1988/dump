@@ -1,5 +1,5 @@
 import PreOrderButton from './PreOrderButton';
-import { LAUNCH } from '@/lib/config';
+import { PRODUCT } from '@/lib/config';
 
 export default function StickyCTA() {
   return (
@@ -11,7 +11,9 @@ export default function StickyCTA() {
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-ink">Daily Fibre</p>
-          <p className="truncate text-xs text-muted">Ships {LAUNCH.shipDateShort}. Refund if we miss it.</p>
+          <p className="truncate text-xs text-muted">
+            Pay {PRODUCT.depositGBP} now. Remaining {PRODUCT.balanceGBP} before dispatch.
+          </p>
         </div>
         <PreOrderButton className="!px-4 !py-3 !text-sm" />
       </div>

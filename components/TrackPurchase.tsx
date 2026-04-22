@@ -24,7 +24,6 @@ export default function TrackPurchase({ sessionId }: Props) {
 
   useEffect(() => {
     if (fired.current) return;
-    fired.current = true;
 
     // Respect the user's current consent state on this device. The server-side
     // Purchase event (fired from the Stripe webhook) is gated separately based
@@ -40,18 +39,35 @@ export default function TrackPurchase({ sessionId }: Props) {
       // than to silently skip the conversion.
     }
 
-    trackEvent(
-      'Purchase',
-      {
-        value: PRODUCT.pricePence / 100,
-        currency: 'GBP',
-        content_name: PRODUCT.name,
-        content_ids: ['daily-fibre-pre-order'],
-        content_type: 'product',
-        num_items: 1,
-      },
-      sessionId ? { eventID: sessionId } : undefined,
-    );
+    let attempts = 0;
+    const firePurchaseEvent = () => {
+      attempts += 1;
+
+      if (typeof window.fbq !== 'function') {
+        if (attempts < 15) {
+          window.setTimeout(firePurchaseEvent, 250);
+        }
+        return;
+      }
+
+      fired.current = true;
+      trackEvent(
+        'Purchase',
+        {
+          value: PRODUCT.depositPence / 100,
+          currency: 'GBP',
+          content_name: `${PRODUCT.name} deposit`,
+          content_ids: [PRODUCT.sku],
+          content_type: 'product',
+          num_items: 1,
+          full_price_value: PRODUCT.pricePence / 100,
+          remaining_balance_value: PRODUCT.balancePence / 100,
+        },
+        sessionId ? { eventID: sessionId } : undefined,
+      );
+    };
+
+    firePurchaseEvent();
   }, [sessionId]);
 
   return null;

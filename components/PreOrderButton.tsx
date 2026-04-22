@@ -21,7 +21,7 @@ export default function PreOrderButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const buttonLabel = label ?? `Pre-order — ${PRODUCT.priceGBP}`;
+  const buttonLabel = label ?? `Pay ${PRODUCT.depositGBP} today`;
 
   async function handleClick() {
     setLoading(true);
@@ -41,12 +41,14 @@ export default function PreOrderButton({
       trackEvent(
         'InitiateCheckout',
         {
-          value: PRODUCT.pricePence / 100,
+          value: PRODUCT.depositPence / 100,
           currency: 'GBP',
-          content_name: PRODUCT.name,
-          content_ids: ['daily-fibre-pre-order'],
+          content_name: `${PRODUCT.name} deposit`,
+          content_ids: [PRODUCT.sku],
           content_type: 'product',
           num_items: 1,
+          full_price_value: PRODUCT.pricePence / 100,
+          remaining_balance_value: PRODUCT.balancePence / 100,
         },
         { eventID: eventId },
       );

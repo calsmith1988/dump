@@ -18,16 +18,16 @@ export default function RefundsPage() {
     >
       <LegalSection title="1. Pre-orders">
         <p>
-          {PRODUCT.name} is currently sold as a pre-order item. Your payment
-          reserves stock from an upcoming batch rather than stock that is already
-          ready to ship.
+          {PRODUCT.name} is currently sold as a preorder item. Your deposit
+          reserves stock from an upcoming batch rather than stock that is
+          already ready to ship.
         </p>
       </LegalSection>
 
-      <LegalSection title="2. Cancelling before dispatch">
+      <LegalSection title="2. Cancelling before the balance charge">
         <p>
-          You may cancel your pre-order at any time before dispatch and receive a
-          full refund.
+          You may cancel your preorder at any time before we charge the
+          remaining balance and receive a full refund of your deposit.
         </p>
         <p>
           To cancel, email{' '}
@@ -43,7 +43,7 @@ export default function RefundsPage() {
         <p>
           Our current target shipping date is {LAUNCH.shipDateLong}. If we tell
           you a specific dispatch date and then do not dispatch on time, you may
-          cancel before dispatch for a full refund.
+          cancel before dispatch for a full refund of any amount you have paid.
         </p>
       </LegalSection>
 
@@ -72,7 +72,8 @@ export default function RefundsPage() {
       <LegalSection title="6. How refunds are made">
         <p>
           Approved refunds will usually be made back to the original payment
-          method used for the order. Timing depends on your payment provider, but
+          method used for the order, whether that was your deposit or a later
+          balance charge. Timing depends on your payment provider, but
           most refunds appear within a few business days after processing.
         </p>
       </LegalSection>

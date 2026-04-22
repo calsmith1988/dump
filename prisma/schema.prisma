@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PreorderStatus {
+  deposit_paid
+  balance_pending
+  balance_succeeded
+  balance_failed
+  cancelled
+  refunded
+}
+
+model Preorder {
+  id                       String         @id @default(cuid())
+  email                    String
+  name                     String?
+  stripeCustomerId         String?        @map("stripe_customer_id")
+  stripeCheckoutSessionId  String         @unique @map("stripe_checkout_session_id")
+  stripePaymentIntentId    String?        @unique @map("stripe_payment_intent_id")
+  depositAmountPence       Int            @map("deposit_amount_pence")
+  remainingAmountPence     Int            @map("remaining_amount_pence")
+  currency                 String
+  status                   PreorderStatus
+  productSku               String         @map("product_sku")
+  shipTargetDate           DateTime       @map("ship_target_date")
+  termsVersion             String         @map("terms_version")
+  marketingConsent         Boolean        @default(false) @map("marketing_consent")
+  createdAt                DateTime       @default(now()) @map("created_at")
+  updatedAt                DateTime       @updatedAt @map("updated_at")
+  balanceChargeAttemptedAt DateTime?      @map("balance_charge_attempted_at")
+  balanceChargeSucceededAt DateTime?      @map("balance_charge_succeeded_at")
+  balancePaymentIntentId   String?        @unique @map("balance_payment_intent_id")
+  balanceInvoiceId         String?        @unique @map("balance_invoice_id")
+  recoveryUrl              String?        @map("recovery_url")
+  lastPaymentError         String?        @map("last_payment_error")
+  stripeRefundId           String?        @unique @map("stripe_refund_id")
+
+  @@index([email])
+  @@index([status])
+  @@index([stripeCustomerId])
+  @@index([createdAt])
+  @@map("preorders")
+}
+
+model StripeWebhookEvent {
+  id          String   @id
+  eventType   String   @map("event_type")
+  createdAt   DateTime @default(now()) @map("created_at")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  @@map("stripe_webhook_events")
+}

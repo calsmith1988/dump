@@ -11,9 +11,11 @@ Values wrapped in `{curly braces}` are driven by [`lib/config.ts`](lib/config.ts
 - **Brand name:** dump
 - **Tagline:** Everyone does it. We make it easier.
 - **SEO description:** Daily Fibre by dump. Support for smoother mornings, less bloat, and more regular days. Plant-based, no sugar, made in the UK.
-- **Contact email:** hello@dump.example
+- **Contact email:** hey@trydump.co
 - **Product name:** Daily Fibre
-- **Price:** £29
+- **Deposit today:** £1
+- **Remaining before dispatch:** £28
+- **Total price:** £29
 - **Net weight:** 250g per pouch
 - **Serving size:** 5g (one scoop)
 - **Servings per pouch:** 50
@@ -45,8 +47,8 @@ Values wrapped in `{curly braces}` are driven by [`lib/config.ts`](lib/config.ts
   > **We make it easier.**
 - Sub-headline:
   > Daily Fibre. Straightforward support for smoother mornings and more regular days. Plant-based. No sugar. No faff.
-- Primary CTA: **Pre-order — £29**
-- Below CTA: *Ships Monday 18 May 2026. Charge today. Cancel any time before it ships.*
+- Primary CTA: **Pay £1 today**
+- Below CTA: *Ships Monday 18 May 2026. We'll charge the remaining £28 before dispatch. Cancel any time before that happens.*
 - Trust chips:
   - Plant-based
   - No sugar
@@ -139,17 +141,17 @@ Footnote under "What's not in it":
 - Eyebrow: **The pre-order promise**
 - Heading: **Pre-ordering should feel safe, not speculative.**
 - Sub-copy:
-  > We're building Daily Fibre the right way — and we'd rather lose a sale than lose your trust. Here's exactly what you're getting when you pre-order.
+  > We're building Daily Fibre the right way — and we'd rather lose a sale than lose your trust. Here's exactly how the deposit preorder works.
 
 **Four points:**
 
-1. **Charge today, reserve your pouch.** One of the first 500 pouches in the first batch. Locked in the moment you pre-order.
-2. **Ships Monday 18 May 2026.** A real date, not a vague "coming soon". Tracked UK delivery, no surprises.
+1. **Pay £1 today, reserve your pouch.** One of the first 500 pouches in the first batch. Locked in the moment you pay your deposit.
+2. **Ships Monday 18 May 2026.** A real date, not a vague "coming soon". We'll charge the remaining £28 before dispatch using your saved payment method.
 3. **Full refund if we miss it.** If Daily Fibre isn't on its way to you by the ship date, we refund automatically. No forms, no calls, no hoops.
-4. **Cancel any time before shipping.** Change your mind before it ships? Email us and we'll cancel and refund in full.
+4. **Cancel before the balance is charged.** Change your mind before the final payment runs? Email us and we'll refund your deposit in full.
 
-- CTA: **Pre-order Daily Fibre — £29**
-- Under CTA: *Secure checkout by Stripe · Free UK shipping*
+- CTA: **Pay £1 deposit**
+- Under CTA: *Secure checkout by Stripe · Remaining £28 charged before dispatch*
 
 ---
 
@@ -177,16 +179,19 @@ Sign-off: *Founder — dump*
 - Heading: **Everything you might be wondering.**
 
 **Q: Why are you taking pre-orders?**
-A: We wanted to make Daily Fibre properly rather than rush a launch. Pre-orders let us commit to the first batch of 500 pouches and ship on a real date instead of a vague one. You're reserving one of those pouches now.
+A: We wanted to make Daily Fibre properly rather than rush a launch. Paying a £1 deposit lets us commit to the first batch of 500 pouches and ship on a real date instead of a vague one.
 
 **Q: When will it actually ship?**
-A: Monday 18 May 2026. It's in the calendar. If we miss it for any reason, you get a full refund automatically — no form, no email chain.
+A: Monday 18 May 2026. It's in the calendar. We'll charge the remaining £28 before dispatch using your saved payment method. If we miss it for any reason, you get a full refund automatically — no form, no email chain.
 
 **Q: What if you're delayed?**
 A: Then we refund you in full before the original ship date passes. We'd rather return your money than make you chase it.
 
-**Q: Can I cancel before it ships?**
-A: Yes. Email hello@dump.example any time before Monday 18 May 2026 and we'll cancel and refund you in full.
+**Q: Can I cancel before the balance is charged?**
+A: Yes. Email hey@trydump.co any time before the final payment runs and we'll cancel and refund your £1 deposit in full.
+
+**Q: What happens after I pay the deposit?**
+A: Your pouch is reserved. We save your payment method securely with Stripe, then charge the remaining £28 before dispatch. If that charge fails, we'll email you a payment link instead.
 
 **Q: What's actually in it?**
 A: One ingredient: psyllium husk. That's the whole list. No sugar, no sweeteners, no gums, no flavour systems, no filler fibres. Final nutritional panel confirmed on pack before shipping.
@@ -204,7 +209,7 @@ A: Daily Fibre is designed for regular daily use. If you're pregnant, breastfeed
 A: Not yet. The first batch is UK-only so we can make sure delivery is clean and fast. International is on the roadmap.
 
 **Q: How much is Daily Fibre?**
-A: £29 for a 50-serving pouch, with free UK shipping. That's your locked-in pre-order price.
+A: £29 in total for a 50-serving pouch, with free UK shipping. You pay £1 today, then the remaining £28 before dispatch.
 
 ---
 
@@ -244,26 +249,26 @@ A: £29 for a 50-serving pouch, with free UK shipping. That's your locked-in pre
 ## 13. Sticky mobile CTA bar
 
 - Product label: **Daily Fibre**
-- Sub-line: *Ships 18 May. Refund if we miss it.*
-- Button: **Pre-order — £29**
+- Sub-line: *Pay £1 now. Remaining £28 before dispatch.*
+- Button: **Pay £1 today**
 
 ---
 
 ## 14. Success page (post-checkout)
 
 - Eyebrow: **Pre-order confirmed**
-- Heading: **You're in. Thanks for backing Daily Fibre.**
+- Heading: **You're in. Your £1 deposit is locked in.**
 - Sub-copy:
-  > Your pouch is reserved from the first batch. We'll send tracking the moment it's on its way.
+  > Your pouch is reserved from the first batch. We'll charge the remaining £28 before dispatch using your saved payment method, and email you if that payment needs attention.
 
 **Three-column summary card:**
 
-| Ship date | Guarantee | Receipt |
+| Ship date | Balance due later | Receipt |
 |---|---|---|
-| Monday 18 May 2026 | Full refund if we miss it | Check your inbox from Stripe |
+| Monday 18 May 2026 | £28 before dispatch | Check your inbox from Stripe |
 
 **Footer note:**
-> Anything at all, reply to your Stripe receipt or email hello@dump.example. We read everything.
+> Anything at all, reply to your Stripe receipt or email hey@trydump.co. We read everything.
 
 - Back button: **Back to home**
 
@@ -274,7 +279,7 @@ A: £29 for a 50-serving pouch, with free UK shipping. That's your locked-in pre
 Shown inside the Stripe Checkout page itself:
 
 - Submit message:
-  > You're reserving one pouch of Daily Fibre. Ships Monday 18 May 2026. Full refund if we miss it.
+  > Pay £1 today to reserve your pouch. We'll charge the remaining £28 before dispatch using your saved payment method. Full refund if we miss 18 May.
 - Shipping address note:
   > Currently shipping to UK addresses only.
 

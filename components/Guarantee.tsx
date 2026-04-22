@@ -3,20 +3,20 @@ import { LAUNCH, PRODUCT } from '@/lib/config';
 
 const points = [
   {
-    title: 'Charge today, reserve your pouch.',
-    body: `One of the first ${LAUNCH.batchSize} pouches in the first batch. Locked in the moment you pre-order.`,
+    title: `Pay ${PRODUCT.depositGBP} today, reserve your pouch.`,
+    body: `One of the first ${LAUNCH.batchSize} pouches in the first batch. Locked in the moment you pay your deposit.`,
   },
   {
     title: `Ships ${LAUNCH.shipDateLong}.`,
-    body: 'A real date, not a vague "coming soon". Tracked UK delivery, no surprises.',
+    body: `A real date, not a vague "coming soon". We’ll charge the remaining ${PRODUCT.balanceGBP} before dispatch using your saved payment method.`,
   },
   {
     title: 'Full refund if we miss it.',
     body: 'If Daily Fibre isn\'t on its way to you by the ship date, we refund automatically. No forms, no calls, no hoops.',
   },
   {
-    title: 'Cancel any time before shipping.',
-    body: 'Change your mind before it ships? Email us and we\'ll cancel and refund in full.',
+    title: 'Cancel before the balance is charged.',
+    body: 'Change your mind before the final payment runs? Email us and we’ll refund your deposit in full.',
   },
 ];
 
@@ -36,7 +36,7 @@ export default function Guarantee() {
               Pre-ordering should feel safe, not speculative.
             </h2>
             <p className="mx-auto mt-4 max-w-[54ch] text-cream/75">
-              We&apos;re building Daily Fibre the right way — and we&apos;d rather lose a sale than lose your trust. Here&apos;s exactly what you&apos;re getting when you pre-order.
+              We&apos;re building Daily Fibre the right way — and we&apos;d rather lose a sale than lose your trust. Here&apos;s exactly how the deposit preorder works.
             </p>
           </div>
 
@@ -55,9 +55,11 @@ export default function Guarantee() {
           <div className="mt-10 flex flex-col items-center gap-3">
             <PreOrderButton
               className="!bg-cream !text-ink hover:!bg-tape"
-              label={`Pre-order Daily Fibre — ${PRODUCT.priceGBP}`}
+              label={`Pay ${PRODUCT.depositGBP} deposit`}
             />
-            <span className="text-xs text-cream/60">Secure checkout by Stripe · {PRODUCT.shippingCopy}</span>
+            <span className="text-xs text-cream/60">
+              Secure checkout by Stripe · Remaining {PRODUCT.balanceGBP} charged before dispatch
+            </span>
           </div>
         </div>
       </div>

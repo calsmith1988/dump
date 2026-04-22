@@ -3,6 +3,41 @@
  * Keep this list short. Anything set here is fair game to change per-campaign.
  */
 
+function readIntEnv(name: string, fallback: number) {
+  const raw = process.env[name];
+  if (!raw) return fallback;
+  const parsed = Number.parseInt(raw, 10);
+  if (Number.isNaN(parsed)) {
+    throw new Error(`${name} must be a whole number in pence.`);
+  }
+  return parsed;
+}
+
+function formatGBPFromPence(pence: number) {
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(pence / 100);
+}
+
+const FULL_PRICE_PENCE = readIntEnv('FULL_PRICE_PENCE', 2900);
+const DEPOSIT_PENCE = readIntEnv('DEPOSIT_PENCE', 100);
+const BALANCE_PENCE = readIntEnv('BALANCE_PENCE', FULL_PRICE_PENCE - DEPOSIT_PENCE);
+
+if (DEPOSIT_PENCE <= 0) {
+  throw new Error('DEPOSIT_PENCE must be greater than zero.');
+}
+
+if (BALANCE_PENCE < 0) {
+  throw new Error('BALANCE_PENCE must be zero or greater.');
+}
+
+if (FULL_PRICE_PENCE !== DEPOSIT_PENCE + BALANCE_PENCE) {
+  throw new Error('FULL_PRICE_PENCE must equal DEPOSIT_PENCE + BALANCE_PENCE.');
+}
+
 export const SITE = {
   name: 'dump',
   tagline: 'Everyone does it. We make it easier.',
@@ -13,13 +48,18 @@ export const SITE = {
 };
 
 export const PRODUCT = {
+  sku: 'daily-fibre-250g',
   name: 'Daily Fibre',
   promise: 'Everyone does it. We make it easier.',
   netWeightGrams: 250,
   servingSizeGrams: 5,
   servings: 50,
-  pricePence: 2900,
-  priceGBP: '£29',
+  pricePence: FULL_PRICE_PENCE,
+  priceGBP: formatGBPFromPence(FULL_PRICE_PENCE),
+  depositPence: DEPOSIT_PENCE,
+  depositGBP: formatGBPFromPence(DEPOSIT_PENCE),
+  balancePence: BALANCE_PENCE,
+  balanceGBP: formatGBPFromPence(BALANCE_PENCE),
   shippingCopy: 'Free UK shipping',
 };
 
@@ -28,6 +68,13 @@ export const LAUNCH = {
   shipDateShort: '18 May',
   shipDateISO: '2026-05-18',
   batchSize: 500,
+};
+
+export const PREORDER = {
+  termsVersion: '2026-04-22',
+  balanceCollectionMode: (
+    process.env.BALANCE_COLLECTION_MODE === 'invoice' ? 'invoice' : 'payment_intent'
+  ) as 'invoice' | 'payment_intent',
 };
 
 export const GUARANTEE = {
@@ -49,4 +96,8 @@ export const COMPANY = {
 
 export const TRACKING = {
   metaPixelId: '1714007130011928',
+};
+
+export const EMAIL = {
+  from: process.env.RESEND_FROM_EMAIL || 'dump <orders@trydump.co>',
 };

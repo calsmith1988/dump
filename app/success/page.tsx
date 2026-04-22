@@ -25,10 +25,10 @@ export default async function SuccessPage({ searchParams }: Props) {
 
         <p className="eyebrow mt-12">Pre-order confirmed</p>
         <h1 className="mt-4 max-w-[22ch] text-balance font-serif text-4xl leading-[1.05] tracking-tight text-ink sm:text-5xl">
-          You&apos;re in. Thanks for backing {PRODUCT.name}.
+          You&apos;re in. Your {PRODUCT.depositGBP} deposit is locked in.
         </h1>
         <p className="mx-auto mt-5 max-w-[52ch] text-ink/75">
-          Your pouch is reserved from the first batch. We&apos;ll send tracking the moment it&apos;s on its way.
+          Your pouch is reserved from the first batch. We&apos;ll charge the remaining {PRODUCT.balanceGBP} before dispatch using your saved payment method, and email you if that payment needs attention.
         </p>
 
         <div className="mt-10 w-full max-w-2xl rounded-[12px] border border-tape bg-cream text-left">
@@ -38,8 +38,8 @@ export default async function SuccessPage({ searchParams }: Props) {
               <p className="mt-2 font-medium text-ink">{LAUNCH.shipDateLong}</p>
             </div>
             <div className="p-6">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Guarantee</p>
-              <p className="mt-2 font-medium text-ink">Full refund if we miss it</p>
+              <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Balance due later</p>
+              <p className="mt-2 font-medium text-ink">{PRODUCT.balanceGBP} before dispatch</p>
             </div>
             <div className="p-6">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Receipt</p>

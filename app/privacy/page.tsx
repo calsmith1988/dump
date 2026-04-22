@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         <p>Depending on how you interact with the site, we may collect:</p>
         <ul className="list-disc pl-5">
           <li>your name, billing address, delivery address, email address, and phone number;</li>
-          <li>order and payment-related information;</li>
+          <li>order, preorder, deposit, and payment-related information;</li>
           <li>communications you send to us;</li>
           <li>technical information such as IP address, browser type, device information, and referral source;</li>
           <li>usage and advertising data collected through cookies, analytics, and advertising technologies.</li>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
         <p>We use personal data to:</p>
         <ul className="list-disc pl-5">
           <li>operate the website and provide customer support;</li>
-          <li>process payments, pre-orders, shipping, refunds, and cancellations;</li>
+          <li>process deposits, saved-payment authorisations, remaining-balance charges, shipping, refunds, and cancellations;</li>
           <li>prevent fraud and protect the security of the site;</li>
           <li>understand how people use the site and improve performance;</li>
           <li>measure advertising effectiveness and build relevant audiences for ads;</li>

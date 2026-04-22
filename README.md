@@ -1,6 +1,6 @@
-# dump — Daily Fibre pre-order landing
+# dump — Daily Fibre deposit pre-order site
 
-A single-page Next.js site that takes real pre-orders via Stripe Checkout. Built to feel premium, calm, and trustworthy for a pre-launch with no reviews or social proof yet.
+A single-page Next.js site that takes real deposit pre-orders via Stripe Checkout. It stores preorders in Postgres, saves cards for later off-session balance charging, and includes a simple admin UI for refunds and bulk charging.
 
 > Everyone does it. We make it easier.
 
@@ -10,7 +10,8 @@ A single-page Next.js site that takes real pre-orders via Stripe Checkout. Built
 
 - **Next.js 14** (App Router) + **TypeScript**
 - **Tailwind CSS** with brand tokens locked to the `dump` guidelines
-- **Stripe** Node SDK (server) + Checkout Session flow
+- **Stripe** Node SDK (server) + deposit Checkout + webhook flow
+- **Prisma + Postgres** for preorder persistence
 - **`next/font`** loading Playfair Display (wordmark only) and Inter (everything else)
 - Deploys cleanly to **Vercel**
 
@@ -32,11 +33,15 @@ cp .env.local.example .env.local
 
 Then fill in:
 
+- `DATABASE_URL` — your Render Postgres connection string
 - `STRIPE_SECRET_KEY` — from https://dashboard.stripe.com/apikeys (use test keys first)
-- `STRIPE_PRICE_ID` — see "Creating the Stripe product" below
 - `STRIPE_WEBHOOK_SECRET` — see "Meta Conversions API (server-side tracking)" below
+- `FULL_PRICE_PENCE`, `DEPOSIT_PENCE`, `BALANCE_PENCE`
+- `BALANCE_COLLECTION_MODE` — `payment_intent` or `invoice`
 - `META_CAPI_ACCESS_TOKEN` — see "Meta Conversions API (server-side tracking)" below
 - `META_CAPI_TEST_EVENT_CODE` — optional, for testing CAPI in Events Manager
+- `ADMIN_PASSWORD` — password gate for `/admin`
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL` — for failed balance recovery emails
 - `NEXT_PUBLIC_SITE_URL` — `http://localhost:3000` locally, your real domain in production
 
 ### 3. Run
@@ -49,15 +54,14 @@ Open http://localhost:3000.
 
 ---
 
-## Creating the Stripe product
+## Stripe setup
 
 1. Go to Stripe Dashboard → **Products** → **Add product**.
-2. Name: `dump Daily Fibre — Pre-order`.
-3. Add a **one-time** price in **GBP** (e.g. `£29.00`).
-4. Copy the generated **price ID** (starts with `price_…`) into `.env.local` as `STRIPE_PRICE_ID`.
-5. Test with Stripe test card `4242 4242 4242 4242`, any future expiry, any CVC.
+2. Name it something like `dump Daily Fibre`.
+3. Test with Stripe test card `4242 4242 4242 4242`, any future expiry, any CVC.
+4. The app creates deposit and balance amounts dynamically from env/config, so there is no single `STRIPE_PRICE_ID` to maintain.
 
-Stripe sends the customer an email receipt automatically after checkout. You fulfill pre-orders manually (or via CSV export) when the batch ships.
+Stripe sends the customer an email receipt automatically after the deposit checkout. Later, the admin can charge the remaining balance off-session or recover failed charges with a hosted invoice link.
 
 ### When you go live
 
@@ -130,9 +134,9 @@ export const LAUNCH = {
 };
 ```
 
-Change the ship date, batch size, or price string here and it flows through the hero, announcement bar, guarantee panel, FAQ, and sticky mobile CTA.
+Change the ship date, batch size, or price values here and they flow through the hero, guarantee panel, FAQ, success page, and admin.
 
-> The real price is set on the Stripe side via `STRIPE_PRICE_ID`. Keep the `priceGBP` string in `config.ts` in sync with the Stripe price so the on-page number matches the checkout number.
+> The deposit and balance amounts are driven by env (`FULL_PRICE_PENCE`, `DEPOSIT_PENCE`, `BALANCE_PENCE`) and surfaced in `config.ts`.
 
 ---
 
@@ -144,8 +148,9 @@ app/
   page.tsx                // landing page composition
   globals.css             // tailwind + base tokens
   success/page.tsx        // post-payment thank-you page
-  api/checkout/route.ts   // creates the Stripe Checkout Session + server InitiateCheckout
-  api/stripe/webhook/route.ts  // Stripe webhook -> Meta CAPI Purchase event
+  admin/                  // password-protected preorder admin
+  api/checkout/route.ts   // creates the Stripe deposit Checkout Session
+  api/stripe/webhook/route.ts  // Stripe webhook -> DB persistence + balance state sync
 components/
   Announcement.tsx
   Nav.tsx
@@ -164,9 +169,15 @@ components/
   ImagePlaceholder.tsx
 lib/
   config.ts               // all campaign-level constants
+  db.ts                   // Prisma client singleton
+  preorder-service.ts     // preorder persistence, balance charging, refunds, recovery emails
+  preorders.ts            // shared preorder metadata helpers
   stripe.ts               // server-only Stripe client
   pixel.ts                // typed wrapper around window.fbq (browser Pixel)
   meta-capi.ts            // server-only Conversions API client
+prisma/
+  schema.prisma           // preorder schema
+  migrations/             // SQL migrations
 public/
   main-product-image.png  // your existing product shot
 ```
@@ -202,17 +213,12 @@ Font families:
 
 ---
 
-## Deploying to Vercel
+## Deploying to Render
 
 1. Push this repo to GitHub.
-2. In Vercel, **Import Project** from that repo.
-3. Under **Environment Variables**, add:
-   - `STRIPE_SECRET_KEY`
-   - `STRIPE_PRICE_ID`
-   - `STRIPE_WEBHOOK_SECRET`
-   - `META_CAPI_ACCESS_TOKEN`
-   - `NEXT_PUBLIC_SITE_URL` (your custom domain)
-4. Deploy, then go back to the Stripe dashboard and point the webhook endpoint at `https://<your-domain>/api/stripe/webhook`.
+2. In Render, create a **Web Service** using Node.
+3. Add the environment variables from `.env.local.example`, especially `DATABASE_URL`, Stripe secrets, pricing vars, admin password, and Resend credentials.
+4. Deploy, then point the Stripe webhook endpoint at `https://<your-domain>/api/stripe/webhook`.
 
 ---
 
