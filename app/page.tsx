@@ -1,4 +1,3 @@
-import Announcement from '@/components/Announcement';
 import Nav from '@/components/Nav';
 import Hero from '@/components/Hero';
 import Pillars from '@/components/Pillars';
@@ -14,7 +13,6 @@ import StickyCTA from '@/components/StickyCTA';
 export default function HomePage() {
   return (
     <>
-      <Announcement />
       <Nav />
       <main id="main">
         <Hero />

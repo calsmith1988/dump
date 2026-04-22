@@ -5,7 +5,6 @@ import { LAUNCH, PRODUCT } from '@/lib/config';
 const chips = [
   'Plant-based',
   'No sugar',
-  'Made in the UK',
   `Refund if we miss ${LAUNCH.shipDateShort}`,
 ];
 
@@ -22,7 +21,7 @@ export default function Hero() {
             <span className="text-cocoa">We make it easier.</span>
           </h1>
 
-          <p className="mt-6 max-w-[48ch] text-balance text-lg leading-relaxed text-ink/80 sm:text-xl">
+          <p className="mt-6 max-w-[48ch] text-balance text-base leading-relaxed text-ink/80 sm:text-lg">
             {PRODUCT.name}. Straightforward support for smoother mornings and more regular days. Plant-based. No sugar. No faff.
           </p>
 
@@ -46,7 +45,7 @@ export default function Hero() {
         <div className="relative">
           <div className="relative mx-auto aspect-[4/5] w-full max-w-[640px]">
             <Image
-              src="/main-image-v2.png"
+              src="/main-product-image-nobg-v2.png"
               alt="dump Daily Fibre — matte cocoa-brown pouch"
               fill
               priority
