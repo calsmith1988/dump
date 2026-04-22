@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function Nav() {
   return (
     <header className="sticky top-0 z-30 w-full border-b border-tape/60 bg-cream/85 backdrop-blur supports-[backdrop-filter]:bg-cream/70">
-      <div className="section flex items-center justify-center py-4 sm:py-5 lg:justify-between">
+      <div className="section flex items-center justify-center py-3 sm:py-4 lg:justify-between">
         <Link
           href="/"
           aria-label="dump — home"
