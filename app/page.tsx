@@ -9,6 +9,7 @@ import FounderNote from '@/components/FounderNote';
 import FAQ from '@/components/FAQ';
 import Footer from '@/components/Footer';
 import StickyCTA from '@/components/StickyCTA';
+import { PRODUCT } from '@/lib/config';
 
 export default function HomePage() {
   return (
@@ -25,7 +26,7 @@ export default function HomePage() {
         <FAQ />
       </main>
       <Footer />
-      <StickyCTA />
+      <StickyCTA depositGBP={PRODUCT.depositGBP} balanceGBP={PRODUCT.balanceGBP} />
     </>
   );
 }

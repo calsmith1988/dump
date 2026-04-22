@@ -2,9 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import PreOrderButton from './PreOrderButton';
-import { PRODUCT } from '@/lib/config';
 
-export default function StickyCTA() {
+type Props = {
+  depositGBP: string;
+  balanceGBP: string;
+};
+
+export default function StickyCTA({ depositGBP, balanceGBP }: Props) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -37,7 +41,7 @@ export default function StickyCTA() {
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-ink">Daily Fibre</p>
           <p className="truncate text-xs text-muted">
-            Pay {PRODUCT.depositGBP} now. Remaining {PRODUCT.balanceGBP} before dispatch.
+            Pay {depositGBP} now. Remaining {balanceGBP} before dispatch.
           </p>
         </div>
         <PreOrderButton className="!px-4 !py-3 !text-sm" />
