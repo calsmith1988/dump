@@ -8,7 +8,11 @@ import {
   requireAdminAuth,
   verifyAdminPassword,
 } from '@/lib/admin-auth';
-import { chargeRemainingBalance, refundDeposit } from '@/lib/preorder-service';
+import {
+  chargeRemainingBalance,
+  refundDeposit,
+  refundOrder,
+} from '@/lib/preorder-service';
 
 function toAdminNotice(message: string) {
   return `/admin?notice=${encodeURIComponent(message)}`;
@@ -41,6 +45,19 @@ export async function refundDepositAction(formData: FormData) {
   await refundDeposit(preorderId);
   revalidatePath('/admin');
   redirect(toAdminNotice('Deposit refunded.'));
+}
+
+export async function refundOrderAction(formData: FormData) {
+  await requireAdminAuth();
+  const preorderId = String(formData.get('preorderId') ?? '');
+
+  if (!preorderId) {
+    redirect(toAdminNotice('Missing preorder id for full refund.'));
+  }
+
+  await refundOrder(preorderId);
+  revalidatePath('/admin');
+  redirect(toAdminNotice('Order refunded.'));
 }
 
 export async function chargeRemainingBalanceAction(formData: FormData) {

@@ -57,6 +57,31 @@ function getNameParts(name: string | null | undefined) {
   };
 }
 
+function getCheckoutAddress(
+  shipping: CheckoutSessionWithShipping['shipping_details'] | CheckoutSessionWithShipping['collected_information'] extends infer _ ? {
+    address?: Stripe.Address | null;
+    name?: string | null;
+  } | null | undefined : never,
+  customer: Stripe.Checkout.Session.CustomerDetails | null | undefined,
+) {
+  return shipping?.address ?? customer?.address ?? null;
+}
+
+async function resolveBalancePaymentIntentId(preorder: Preorder) {
+  if (preorder.balancePaymentIntentId) {
+    return preorder.balancePaymentIntentId;
+  }
+
+  if (!preorder.balanceInvoiceId) {
+    return null;
+  }
+
+  const invoice = await stripe.invoices.retrieve(preorder.balanceInvoiceId);
+  return typeof invoice.payment_intent === 'string'
+    ? invoice.payment_intent
+    : invoice.payment_intent?.id ?? null;
+}
+
 async function setCustomerDefaultPaymentMethod(customerId: string, paymentMethodId: string) {
   await stripe.customers.update(customerId, {
     invoice_settings: {
@@ -224,6 +249,7 @@ export async function persistCompletedCheckoutSession(session: Stripe.Checkout.S
   const customer = checkoutSession.customer_details;
   const name = shipping?.name ?? customer?.name ?? null;
   const email = customer?.email;
+  const address = getCheckoutAddress(shipping, customer);
 
   if (!email) {
     throw new Error('Checkout session did not include a customer email.');
@@ -248,6 +274,12 @@ export async function persistCompletedCheckoutSession(session: Stripe.Checkout.S
     update: {
       email,
       name,
+      phone: customer?.phone ?? null,
+      addressLine1: address?.line1 ?? null,
+      addressLine2: address?.line2 ?? null,
+      addressCity: address?.city ?? null,
+      addressPostalCode: address?.postal_code ?? null,
+      addressCountry: address?.country ?? null,
       stripeCustomerId,
       stripePaymentIntentId,
       depositAmountPence: checkoutSession.amount_total ?? PRODUCT.depositPence,
@@ -265,6 +297,12 @@ export async function persistCompletedCheckoutSession(session: Stripe.Checkout.S
     create: {
       email,
       name,
+      phone: customer?.phone ?? null,
+      addressLine1: address?.line1 ?? null,
+      addressLine2: address?.line2 ?? null,
+      addressCity: address?.city ?? null,
+      addressPostalCode: address?.postal_code ?? null,
+      addressCountry: address?.country ?? null,
       stripeCustomerId,
       stripeCheckoutSessionId: checkoutSession.id,
       stripePaymentIntentId,
@@ -453,6 +491,62 @@ export async function refundDeposit(preorderId: string) {
       status: 'refunded',
       stripeRefundId: refund.id,
       lastPaymentError: null,
+    },
+  });
+}
+
+export async function refundOrder(preorderId: string) {
+  const preorder = await db.preorder.findUnique({
+    where: { id: preorderId },
+  });
+
+  if (!preorder) {
+    throw new Error('Preorder not found.');
+  }
+
+  if (preorder.status !== 'balance_succeeded') {
+    throw new Error('Full-order refunds are only available after the balance succeeds.');
+  }
+
+  if (!preorder.stripePaymentIntentId) {
+    throw new Error('No deposit payment intent is stored for this preorder.');
+  }
+
+  const balancePaymentIntentId = await resolveBalancePaymentIntentId(preorder);
+  if (!balancePaymentIntentId) {
+    throw new Error('No balance payment intent is stored for this preorder.');
+  }
+
+  const depositRefund = await stripe.refunds.create({
+    payment_intent: preorder.stripePaymentIntentId,
+    amount: preorder.depositAmountPence,
+    reason: 'requested_by_customer',
+    metadata: {
+      preorder_id: preorder.id,
+      product_sku: preorder.productSku,
+      charge_type: DEPOSIT_CHARGE_TYPE,
+    },
+  });
+
+  const balanceRefund = await stripe.refunds.create({
+    payment_intent: balancePaymentIntentId,
+    amount: preorder.remainingAmountPence,
+    reason: 'requested_by_customer',
+    metadata: {
+      preorder_id: preorder.id,
+      product_sku: preorder.productSku,
+      charge_type: BALANCE_CHARGE_TYPE,
+    },
+  });
+
+  return db.preorder.update({
+    where: { id: preorder.id },
+    data: {
+      status: 'refunded',
+      stripeRefundId: depositRefund.id,
+      stripeBalanceRefundId: balanceRefund.id,
+      lastPaymentError: null,
+      recoveryUrl: null,
     },
   });
 }

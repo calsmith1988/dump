@@ -8,6 +8,7 @@ import {
   chargeRemainingBalanceAction,
   logoutAction,
   refundDepositAction,
+  refundOrderAction,
 } from '@/app/admin/actions';
 
 type Props = {
@@ -50,6 +51,28 @@ function canRefundDeposit(status: PreorderStatus) {
   return status === 'deposit_paid' || status === 'balance_failed';
 }
 
+function canRefundOrder(status: PreorderStatus) {
+  return status === 'balance_succeeded';
+}
+
+function formatAddress(preorder: {
+  addressLine1: string | null;
+  addressLine2: string | null;
+  addressCity: string | null;
+  addressPostalCode: string | null;
+  addressCountry: string | null;
+}) {
+  return [
+    preorder.addressLine1,
+    preorder.addressLine2,
+    preorder.addressCity,
+    preorder.addressPostalCode,
+    preorder.addressCountry,
+  ]
+    .filter(Boolean)
+    .join(', ');
+}
+
 export default async function AdminPage({ searchParams }: Props) {
   await requireAdminAuth();
 
@@ -80,11 +103,16 @@ export default async function AdminPage({ searchParams }: Props) {
               {formatPence(PRODUCT.balancePence)} before dispatch.
             </p>
           </div>
-          <form action={logoutAction}>
-            <button type="submit" className="btn-secondary">
-              Sign out
-            </button>
-          </form>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/admin/export" className="btn-secondary">
+              Export CSV
+            </Link>
+            <form action={logoutAction}>
+              <button type="submit" className="btn-secondary">
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
 
         <div className="mt-8 rounded-[14px] border border-tape bg-white p-5 shadow-soft">
@@ -147,6 +175,7 @@ export default async function AdminPage({ searchParams }: Props) {
                     <th className="px-4 py-3">Deposit</th>
                     <th className="px-4 py-3">Remaining</th>
                     <th className="px-4 py-3">Created</th>
+                    <th className="px-4 py-3">Contact & shipping</th>
                     <th className="px-4 py-3">Recovery</th>
                     <th className="px-4 py-3">Actions</th>
                   </tr>
@@ -198,6 +227,12 @@ export default async function AdminPage({ searchParams }: Props) {
                             : '—'}
                         </div>
                       </td>
+                      <td className="px-4 py-4 text-xs text-muted">
+                        <div>{preorder.phone || 'No phone captured'}</div>
+                        <div className="mt-2 max-w-[24ch]">
+                          {formatAddress(preorder) || 'No address captured'}
+                        </div>
+                      </td>
                       <td className="px-4 py-4 text-xs">
                         {preorder.recoveryUrl ? (
                           <a
@@ -214,33 +249,42 @@ export default async function AdminPage({ searchParams }: Props) {
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex flex-col gap-2">
-                          <button
-                            type="submit"
-                            formAction={chargeRemainingBalanceAction}
-                            name="preorderId"
-                            value={preorder.id}
-                            className="btn-secondary text-xs"
-                            disabled={!canAttemptBalanceCharge(preorder.status)}
-                          >
-                            Charge balance
-                          </button>
-                          <button
-                            type="submit"
-                            formAction={refundDepositAction}
-                            name="preorderId"
-                            value={preorder.id}
-                            className="btn-secondary text-xs"
-                            disabled={!canRefundDeposit(preorder.status)}
-                          >
-                            Refund deposit
-                          </button>
+                          {canAttemptBalanceCharge(preorder.status) ? (
+                            <form action={chargeRemainingBalanceAction}>
+                              <input type="hidden" name="preorderId" value={preorder.id} />
+                              <button type="submit" className="btn-secondary text-xs">
+                                Charge balance
+                              </button>
+                            </form>
+                          ) : null}
+                          {canRefundDeposit(preorder.status) ? (
+                            <form action={refundDepositAction}>
+                              <input type="hidden" name="preorderId" value={preorder.id} />
+                              <button type="submit" className="btn-secondary text-xs">
+                                Refund deposit
+                              </button>
+                            </form>
+                          ) : null}
+                          {canRefundOrder(preorder.status) ? (
+                            <form action={refundOrderAction}>
+                              <input type="hidden" name="preorderId" value={preorder.id} />
+                              <button type="submit" className="btn-secondary text-xs">
+                                Refund order
+                              </button>
+                            </form>
+                          ) : null}
+                          {!canAttemptBalanceCharge(preorder.status) &&
+                          !canRefundDeposit(preorder.status) &&
+                          !canRefundOrder(preorder.status) ? (
+                            <span className="text-xs text-muted">No actions available</span>
+                          ) : null}
                         </div>
                       </td>
                     </tr>
                   ))}
                   {preorders.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="px-4 py-10 text-center text-sm text-muted">
+                      <td colSpan={9} className="px-4 py-10 text-center text-sm text-muted">
                         No preorders match this filter yet.
                       </td>
                     </tr>
