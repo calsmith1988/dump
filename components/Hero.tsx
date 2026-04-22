@@ -11,7 +11,7 @@ const chips = [
 export default function Hero() {
   return (
     <section id="pre-order" className="relative overflow-hidden pt-6 sm:pt-14 lg:pt-16">
-      <div className="section grid grid-cols-1 items-center gap-8 pb-12 sm:gap-12 sm:pb-16 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pb-20">
+      <div className="section grid grid-cols-1 items-center gap-4 pb-12 sm:gap-12 sm:pb-16 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pb-20">
         <div className="order-2 max-w-prose lg:order-1">
           <p className="eyebrow mb-6 hidden sm:block">Daily Fibre · Pre-order</p>
 
@@ -27,15 +27,12 @@ export default function Hero() {
 
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
             <PreOrderButton className="w-full sm:w-auto" />
-            <span className="text-sm text-muted sm:hidden">
-              Ships {LAUNCH.shipDateShort}. {PRODUCT.balanceGBP} before dispatch — cancel any time.
-            </span>
             <span className="hidden text-sm text-muted sm:inline">
               Ships {LAUNCH.shipDateLong}. We&apos;ll charge the remaining {PRODUCT.balanceGBP} before dispatch. Cancel any time before that happens.
             </span>
           </div>
 
-          <ul className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted sm:mt-8 sm:gap-x-5">
+          <ul className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted sm:mt-8 sm:gap-x-5">
             {chips.map((chip) => (
               <li key={chip} className="chip">
                 <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-muted/60" aria-hidden />
@@ -43,6 +40,10 @@ export default function Hero() {
               </li>
             ))}
           </ul>
+
+          <p className="mt-5 text-sm text-muted sm:hidden">
+            Ships {LAUNCH.shipDateShort}. {PRODUCT.balanceGBP} before dispatch. Cancel any time.
+          </p>
         </div>
 
         <div className="relative order-1 lg:order-2">
