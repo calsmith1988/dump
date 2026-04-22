@@ -77,10 +77,10 @@ Values wrapped in `{curly braces}` are driven by [`lib/config.ts`](lib/config.ts
   > Daily Fibre is built to sit quietly in your morning. Not fancy. Not fruity. Just straightforward daily fibre.
 
 **Step 01 — Mix**
-> One scoop into water. Stir and drink straight away.
+> One scoop into water. Give it a stir.
 
 **Step 02 — Drink**
-> Unflavoured and simple. Easy to slot into your morning or evening.
+> Straight down. Unflavoured and simple. Easy to slot into your morning or evening.
 
 **Step 03 — Go**
 > Daily fibre supports smoother, more regular movement — usually within a few days.
@@ -159,13 +159,13 @@ Footnote under "What's not in it":
 
 - Eyebrow: **A note from the founder**
 - Pull-quote heading:
-  > "I built dump because every fibre product I tried either looked like it was from 1994, tasted like nothing in particular, or spoke to me like I was fragile."
+  > "I built dump because every fibre product I tried either looked like it was from 1994, was padded with sweeteners and fillers, or spoke to me like I was fragile."
 
 Body:
 
 > Feeling backed up or sluggish isn't a niche problem. Almost everyone has it at some point. And almost every brand in the aisle treats it like something to whisper about.
 
-> Daily Fibre is the product I wanted to buy — a plain, confident, plant-based daily fibre that does its job, looks like it belongs on your counter, and doesn't make you feel weird about why you're buying it.
+> Daily Fibre is the product I wanted to buy — a plain, confident, plant-based daily fibre that does its job, fits quietly into your day, and doesn't make you feel weird about why you're buying it.
 
 > Pre-ordering genuinely helps us get it made. If for any reason we don't ship on time, you get your money back automatically. That's the deal.
 

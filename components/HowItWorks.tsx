@@ -4,14 +4,14 @@ const steps = [
   {
     n: '01',
     title: 'Mix',
-    body: 'One scoop into water. Stir and drink straight away.',
+    body: 'One scoop into water. Give it a stir.',
     image: '/1-howitworks.png',
     alt: 'A scoop of psyllium husk being added to a glass of water',
   },
   {
     n: '02',
     title: 'Drink',
-    body: 'Unflavoured and simple. Easy to slot into your morning or evening.',
+    body: 'Straight down. Unflavoured and simple. Easy to slot into your morning or evening.',
     image: '/2-howitworks-v2.png',
     alt: 'A glass of water with dump Daily Fibre stirred in',
   },

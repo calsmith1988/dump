@@ -54,7 +54,7 @@ export default function Hero() {
               fill
               priority
               sizes="(min-width: 1024px) 640px, (min-width: 640px) 90vw, 100vw"
-              className="object-contain sm:scale-[1.5]"
+              className="object-contain scale-[1.3] sm:scale-[1.5]"
             />
           </div>
           <div className="pointer-events-none absolute -bottom-6 left-1/2 h-10 w-[70%] -translate-x-1/2 rounded-full bg-ink/5 blur-2xl" aria-hidden />

@@ -26,14 +26,14 @@ export default function FounderNote() {
               id="founder-heading"
               className="mt-3 text-balance font-serif text-2xl leading-snug tracking-tight text-ink sm:text-3xl"
             >
-              &ldquo;I built dump because every fibre product I tried either looked like it was from 1994, tasted like nothing in particular, or spoke to me like I was fragile.&rdquo;
+              &ldquo;I built dump because every fibre product I tried either looked like it was from 1994, was padded with sweeteners and fillers, or spoke to me like I was fragile.&rdquo;
             </h2>
             <div className="mt-6 space-y-4 text-ink/75">
               <p>
                 Feeling backed up or sluggish isn&apos;t a niche problem. Almost everyone has it at some point. And almost every brand in the aisle treats it like something to whisper about.
               </p>
               <p>
-                Daily Fibre is the product I wanted to buy — a plain, confident, plant-based daily fibre that does its job, looks like it belongs on your counter, and doesn&apos;t make you feel weird about why you&apos;re buying it.
+                Daily Fibre is the product I wanted to buy — a plain, confident, plant-based daily fibre that does its job, fits quietly into your day, and doesn&apos;t make you feel weird about why you&apos;re buying it.
               </p>
               <p>
                 Pre-ordering genuinely helps us get it made. If for any reason we don&apos;t ship on time, you get your money back automatically. That&apos;s the deal.
